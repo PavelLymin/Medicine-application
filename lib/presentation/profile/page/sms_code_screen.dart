@@ -15,6 +15,14 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
   final _fieldThreeController = TextEditingController();
   final _fieldFourController = TextEditingController();
 
+  late ValidateSmsCodeCubit _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = ValidateSmsCodeCubit();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -25,29 +33,32 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 64),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SmsCodePlaceholder(
-            fieldOne: _fieldOneController,
-            fieldTwo: _fieldTwoController,
-            fieldThree: _fieldThreeController,
-            fieldFour: _fieldFourController,
-          ),
-          const SizedBox(height: 32),
-          BlocBuilder<ValidateSmsCodeCubit, ValidateSmsCodeState>(
-            builder: (context, state) {
-              return BaseButton(
-                onPressed: () {},
-                isEnable: state.isValidate,
-                widget: const Text('Continue'),
-              );
-            },
-          ),
-        ],
+  Widget build(BuildContext context) => BlocProvider(
+    create: (context) => _bloc,
+    child: Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 64),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SmsCodePlaceholder(
+              fieldOne: _fieldOneController,
+              fieldTwo: _fieldTwoController,
+              fieldThree: _fieldThreeController,
+              fieldFour: _fieldFourController,
+            ),
+            const SizedBox(height: 32),
+            BlocBuilder<ValidateSmsCodeCubit, ValidateSmsCodeState>(
+              builder: (context, state) {
+                return BaseButton(
+                  onPressed: () {},
+                  isEnable: state.isValidate,
+                  widget: const Text('Continue'),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     ),
   );

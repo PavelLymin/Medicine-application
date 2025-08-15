@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
+import 'package:medicine_application/common/constant/config.dart';
 import '../../../common/ui.dart';
 
 class UpdatePhoneNumberScreen extends StatefulWidget {
@@ -52,7 +53,6 @@ class _UpdatePhoneNumberScreenState extends State<UpdatePhoneNumberScreen>
                   const SizedBox(height: 64),
                   TextPlaceholder(
                     controller: _phoneNumberController,
-                    onChanged: (text) {},
                     autofillHints: [AutofillHints.telephoneNumber],
                     labelText: 'Phone Number',
                     hintText: 'Enter your phone number',
@@ -81,7 +81,7 @@ class _UpdatePhoneNumberScreenState extends State<UpdatePhoneNumberScreen>
 
 mixin _PhoneNumberFormStateMixin<T extends StatefulWidget> on State<T> {
   String? _validatePhoneNumber(String phoneNumber) {
-    RegExp regExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
+    RegExp regExp = Config.phoneNumberValidate;
     if (phoneNumber.isEmpty) {
       return 'Please enter mobile number';
     } else if (!regExp.hasMatch(phoneNumber)) {

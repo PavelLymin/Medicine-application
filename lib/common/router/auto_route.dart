@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:get_it/get_it.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/presentation/authentication/page/signin.dart';
 import 'package:medicine_application/presentation/chat/page/chat_screen.dart';
@@ -12,6 +11,11 @@ import '../components/navigations/bottom_navigation_bar.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
+  AppRouter({required AuthenticationBloc authenticationBloc})
+    : _authenticationBloc = authenticationBloc;
+
+  final AuthenticationBloc _authenticationBloc;
+
   @override
   List<AutoRoute> get routes => [
     NamedRouteDef(
@@ -28,7 +32,7 @@ class AppRouter extends RootStackRouter {
     ),
     NamedRouteDef(
       initial: true,
-      guards: [AuthGuard()],
+      guards: [AuthGuard(authenticationBloc: _authenticationBloc)],
       name: 'BottomNavigationBar',
       builder: (context, _) => const RootScreen(),
       children: [
@@ -55,11 +59,14 @@ class AppRouter extends RootStackRouter {
 }
 
 class AuthGuard extends AutoRouteGuard {
-  final bloc = GetIt.instance<AuthenticationBloc>();
+  const AuthGuard({required AuthenticationBloc authenticationBloc})
+    : _authenticationBloc = authenticationBloc;
+
+  final AuthenticationBloc _authenticationBloc;
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    final isAuthenticated = bloc.state.isAuthenticated;
+    final isAuthenticated = _authenticationBloc.state.isAuthenticated;
     if (isAuthenticated) {
       resolver.next(true);
     } else {

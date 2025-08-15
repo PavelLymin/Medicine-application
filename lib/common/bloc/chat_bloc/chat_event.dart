@@ -1,6 +1,6 @@
 part of 'chat_bloc.dart';
 
-typedef ChatEventMatch<R, S extends ChatEvent> = R Function(S event);
+typedef ChatEventMatch<R, S extends ChatEvent> = FutureOr<R> Function(S event);
 
 sealed class ChatEvent {
   const ChatEvent();
@@ -10,11 +10,9 @@ sealed class ChatEvent {
   FutureOr<R> map<R>({
     // ignore: library_private_types_in_public_api
     required ChatEventMatch<R, _LoadChats> loadChats,
-  }) {
-    return switch (this) {
-      _LoadChats e => loadChats(e),
-    };
-  }
+  }) => switch (this) {
+    _LoadChats e => loadChats(e),
+  };
 }
 
 final class _LoadChats extends ChatEvent {

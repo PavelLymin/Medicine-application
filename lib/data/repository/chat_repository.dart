@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medicine_application/common/constant/config.dart';
 import 'package:medicine_application/model/chat_entity.dart';
 
 abstract class IChatRepository {
@@ -7,22 +9,22 @@ abstract class IChatRepository {
 }
 
 class ChatRepository implements IChatRepository {
-  const ChatRepository({required Dio dio, required FirebaseAuth firebaseAuth})
-    : _dio = dio,
-      _firebaseAuth = firebaseAuth;
+  const ChatRepository({required Dio dio}) : _dio = dio;
 
   final Dio _dio;
-  final FirebaseAuth _firebaseAuth;
 
   @override
   Future<List<FullChatEntity>> fetchChatByUserId() async {
-    Response response = await _dio.get(
-      'http://localhost:8080/chats',
-      queryParameters: {'user_id': _firebaseAuth.currentUser?.uid},
-    );
+    Response response = await _dio.get('${Config.apiBaseUrl}/chats');
 
-    final json = response.data as List<Map<String, dynamic>>;
-    final chats = json.map((json) => FullChatEntity.fromJson(json)).toList();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load chats');
+    }
+
+    final List<dynamic> list = jsonDecode(response.data) as List<dynamic>;
+
+    final map = list.cast<Map<String, dynamic>>();
+    final chats = map.map((json) => FullChatEntity.fromJson(json)).toList();
 
     return chats;
   }

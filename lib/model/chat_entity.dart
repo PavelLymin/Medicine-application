@@ -1,3 +1,5 @@
+import 'package:medicine_application/model/message_entity.dart';
+
 sealed class ChatEntity {
   const ChatEntity();
 
@@ -13,7 +15,7 @@ sealed class ChatEntity {
     required String doctorId,
     String? avatarUrl,
     required DateTime createdAt,
-    required String lastMessage,
+    required MessageEntity lastMessage,
   }) = FullChatEntity;
 }
 
@@ -68,9 +70,9 @@ class CreatedChatEntity extends ChatEntity {
 
   factory CreatedChatEntity.fromJson(Map<String, dynamic> json) {
     return CreatedChatEntity(
-      userId: json['userId'] as String,
-      doctorId: json['doctorId'] as String,
-      avatarUrl: json['avatarUrl'] as String?,
+      userId: json['user_id'] as String,
+      doctorId: json['doctor_id'] as String,
+      avatarUrl: json['avatar_url'] as String?,
     );
   }
 }
@@ -90,7 +92,7 @@ class FullChatEntity extends ChatEntity {
   final String doctorId;
   final String? avatarUrl;
   final DateTime createdAt;
-  final String lastMessage;
+  final MessageEntity lastMessage;
 
   @override
   String toString() {
@@ -121,7 +123,7 @@ class FullChatEntity extends ChatEntity {
     String? doctorId,
     String? avatarUrl,
     DateTime? createdAt,
-    String? lastMessage,
+    MessageEntity? lastMessage,
   }) {
     return FullChatEntity(
       id: id ?? this.id,
@@ -136,22 +138,22 @@ class FullChatEntity extends ChatEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'userId': userId,
-      'doctorId': doctorId,
-      'avatarUrl': avatarUrl,
-      'createdAt': createdAt.toIso8601String(),
-      'lastMessage': lastMessage,
+      'user_id': userId,
+      'doctor_id': doctorId,
+      'avatar_url': avatarUrl,
+      'created_at': createdAt.toIso8601String(),
+      'last_message': lastMessage,
     };
   }
 
   factory FullChatEntity.fromJson(Map<String, dynamic> json) {
     return FullChatEntity(
       id: json['id'] as int,
-      userId: json['userId'] as String,
-      doctorId: json['doctorId'] as String,
-      avatarUrl: json['avatarUrl'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      lastMessage: json['lastMessage'] as String,
+      userId: json['user_id'] as String,
+      doctorId: json['doctor_id'] as String,
+      avatarUrl: json['avatar_url'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      lastMessage: FullMessageEntity.fromJson(json['last_message']),
     );
   }
 }
