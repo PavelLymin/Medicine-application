@@ -4,6 +4,7 @@ typedef ChatStateMatch<R, S extends ChatState> = R Function(S state);
 
 sealed class ChatState {
   const ChatState({required this.chats});
+
   final List<FullChatEntity> chats;
 
   const factory ChatState.loading({required List<FullChatEntity> chats}) =

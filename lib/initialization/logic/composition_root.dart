@@ -3,9 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/web.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/common/bloc/chat_bloc/chat_bloc.dart';
+import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart';
 import 'package:medicine_application/data/repository/auth_repository.dart';
 import 'package:medicine_application/data/repository/chat_repository.dart';
 import 'package:medicine_application/initialization/dependency/dependency_container.dart';
+
+import '../../data/repository/message_repository.dart';
+import '../../data/ws_client_service/message_websocket_service.dart';
 
 class CompositionRoot {
   const CompositionRoot();
@@ -25,11 +29,19 @@ class CompositionRoot {
 
     final chatRepository = ChatRepository(dio: dio);
     final chatBloc = ChatBloc(chatRepository: chatRepository);
+
+    final messageRepository = MessageRepository(dio: dio);
+    final messageWebSocketService = MessageWebSocketService();
+    final messageBloc = MessageBloc(
+      messageWebSocketService: messageWebSocketService,
+      messageRepository: messageRepository,
+    );
     return _DependencyFactory(
       logger: logger,
       authenticationBloc: authenticationBloc,
       chatBloc: chatBloc,
       chatRepository: chatRepository,
+      messageBloc: messageBloc,
     ).create();
   }
 }
@@ -52,12 +64,18 @@ class _DependencyFactory implements Factory<DependencyContainer> {
     required this.authenticationBloc,
     required this.chatBloc,
     required this.chatRepository,
+    required this.messageBloc,
   });
 
   final Logger logger;
+
   final AuthenticationBloc authenticationBloc;
+
   final ChatBloc chatBloc;
+
   final IChatRepository chatRepository;
+
+  final MessageBloc messageBloc;
 
   @override
   DependencyContainer create() => DependencyContainer(
@@ -65,5 +83,6 @@ class _DependencyFactory implements Factory<DependencyContainer> {
     authenticationBloc: authenticationBloc,
     chatBloc: chatBloc,
     chatRepository: chatRepository,
+    messageBloc: messageBloc,
   );
 }

@@ -1,6 +1,7 @@
 import 'package:logger/web.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/common/bloc/chat_bloc/chat_bloc.dart';
+import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart';
 import 'package:medicine_application/data/repository/chat_repository.dart';
 
 class DependencyContainer {
@@ -9,9 +10,15 @@ class DependencyContainer {
     required this.authenticationBloc,
     required this.chatBloc,
     required this.chatRepository,
+    required this.messageBloc,
   });
   final Logger logger;
+
   final AuthenticationBloc authenticationBloc;
+
   final ChatBloc chatBloc;
+
   final IChatRepository chatRepository;
+
+  final MessageBloc messageBloc;
 }

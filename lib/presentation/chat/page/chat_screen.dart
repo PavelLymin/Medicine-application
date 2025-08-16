@@ -12,50 +12,88 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late Logger logger;
+  late Logger _logger;
+  late ChatBloc _bloc;
 
   @override
   void initState() {
     super.initState();
-    context.read<ChatBloc>().add(ChatEvent.loadChats());
-    logger = DepenciesScope.of(context).logger;
-    logger.i('Welcome to chat screen!');
+    _logger = DepenciesScope.of(context).logger;
+    _logger.i('Welcome to chat screen!');
+    _bloc = DepenciesScope.of(context).chatBloc;
+    _bloc.add(ChatEvent.loadChats());
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(title: const Text('Chats')),
-        BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            return state.maybeMap(
-              orElse: () => SliverToBoxAdapter(child: Container()),
-              loading: (_) => const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (state) {
-                logger.e(state.message);
-                return SliverToBoxAdapter(
-                  child: Center(
-                    child: const Text('Произoшла ошибка. Попробуйте позже'),
+    return BlocProvider.value(
+      value: _bloc,
+      child: CustomScrollView(
+        slivers: [
+          const SliverAppBar(title: Text('Chats')),
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return state.maybeMap(
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+                loaded: (state) => SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: state.chats.length,
+                    (context, index) {
+                      final chat = state.chats[index];
+                      return ListTile(title: Text(chat.lastMessage.toString()));
+                    },
                   ),
-                );
-              },
-              loaded: (state) => SliverList.builder(
-                itemCount: state.chats.length,
-                itemBuilder: (context, index) {
-                  final chat = state.chats[index];
-                  return ListTile(
-                    title: Text('Chat ${chat.lastMessage}'),
-                    onTap: () {},
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
+                ),
+                error: (_) => const SliverToBoxAdapter(
+                  child: Text('Произошла ошибка. Попробуйте позже'),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChatList extends StatefulWidget {
+  const _ChatList();
+
+  @override
+  State<_ChatList> createState() => _ChatListState();
+}
+
+class _ChatListState extends State<_ChatList> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ChatBloc>().add(ChatEvent.loadChats());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ChatBloc, ChatState>(
+      builder: (context, state) {
+        return state.maybeMap(
+          orElse: () => Container(),
+          loading: (_) => const Center(child: CircularProgressIndicator()),
+          error: (state) =>
+              const Center(child: Text('Произoшла ошибка. Попробуйте позже')),
+          loaded: (state) => ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: state.chats.length,
+            itemBuilder: (context, index) {
+              final chat = state.chats[index];
+              return ListTile(
+                title: Text('Chat ${chat.lastMessage}'),
+                onTap: () {},
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
