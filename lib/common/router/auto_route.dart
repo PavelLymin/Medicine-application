@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/presentation/authentication/page/signin.dart';
-import 'package:medicine_application/presentation/chat/page/chat_screen.dart';
+import 'package:medicine_application/presentation/chat/page/list_of_chats_screen.dart';
 import 'package:medicine_application/presentation/consultations/page/consultations_screen.dart';
 import 'package:medicine_application/presentation/home/page/home_screen.dart';
 import 'package:medicine_application/presentation/profile/page/profile_sreen.dart';
 import 'package:medicine_application/presentation/profile/page/update_phone_number_screen.dart';
+import '../../presentation/chat/page/chat_screen.dart';
 import '../../presentation/profile/page/sms_code_screen.dart';
 import '../components/navigations/bottom_navigation_bar.dart';
 
@@ -31,6 +32,10 @@ class AppRouter extends RootStackRouter {
       builder: (context, _) => const SmsCodeScreen(),
     ),
     NamedRouteDef(
+      name: 'ChatScreen',
+      builder: (context, _) => const ChatScreen(),
+    ),
+    NamedRouteDef(
       initial: true,
       guards: [AuthGuard(authenticationBloc: _authenticationBloc)],
       name: 'BottomNavigationBar',
@@ -47,7 +52,7 @@ class AppRouter extends RootStackRouter {
         ),
         NamedRouteDef(
           name: 'ChatScreen',
-          builder: (context, _) => const ChatScreen(),
+          builder: (context, _) => const ListOfChatsScreen(),
         ),
         NamedRouteDef(
           name: 'ConsultationsScreen',

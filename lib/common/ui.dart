@@ -8,3 +8,4 @@ export 'components/buttons/base_button.dart';
 export 'components/shimmer/shimmer_loading.dart';
 export 'components/shimmer/shimmer.dart';
 export 'components/scrollers/base_scroller.dart';
+export 'components/image/avatar.dart';

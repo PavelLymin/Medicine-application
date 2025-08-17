@@ -12,6 +12,7 @@ class DependencyContainer {
     required this.chatRepository,
     required this.messageBloc,
   });
+
   final Logger logger;
 
   final AuthenticationBloc authenticationBloc;

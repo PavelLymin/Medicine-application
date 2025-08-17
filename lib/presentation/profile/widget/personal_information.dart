@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/common/extencions/build_context.dart';
 import 'package:medicine_application/common/ui.dart';
+import 'package:medicine_application/model/user_entity.dart';
 import 'package:medicine_application/presentation/profile/page/update_email_screen.dart';
 import 'package:medicine_application/presentation/profile/page/update_phone_number_screen.dart';
 import 'profile_tile.dart';
@@ -17,19 +18,11 @@ class PersonalInformation extends StatelessWidget {
           builder: (context, state) {
             return state.maybeMap(
               orElse: () => Container(),
-              loading: (_) => ShimmerLoading(
-                isLoading: true,
-                child: const _TilesPersonalInformation(),
-              ),
+              loading: (_) =>
+                  ShimmerLoading(isLoading: true, child: Container()),
               authenticated: (state) {
                 final user = state.user;
-                return _TilesPersonalInformation(
-                  photoURL: user.photoURL,
-                  displayName: user.displayName,
-                  email: user.email,
-                  phoneNumber: user.email,
-                  addres: user.email,
-                );
+                return _TilesPersonalInformation(user: user);
               },
             );
           },
@@ -40,19 +33,9 @@ class PersonalInformation extends StatelessWidget {
 }
 
 class _TilesPersonalInformation extends StatelessWidget {
-  const _TilesPersonalInformation({
-    this.photoURL,
-    this.displayName,
-    this.email,
-    this.phoneNumber,
-    this.addres,
-  });
+  const _TilesPersonalInformation({required this.user});
 
-  final String? photoURL;
-  final String? displayName;
-  final String? email;
-  final String? phoneNumber;
-  final String? addres;
+  final AuthenticatedUser user;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -60,12 +43,7 @@ class _TilesPersonalInformation extends StatelessWidget {
       Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          CircleAvatar(
-            radius: 64,
-            foregroundImage: photoURL == null
-                ? AssetImage('assets/icons/user.png')
-                : NetworkImage(photoURL!),
-          ),
+          UserAvatar(user: user),
           Align(
             alignment: Alignment(0.3, 1),
             child: const Icon(Icons.mode_edit_outline),
@@ -73,7 +51,7 @@ class _TilesPersonalInformation extends StatelessWidget {
         ],
       ),
       const SizedBox(height: 24),
-      Text(displayName ?? '', style: context.themeText.titleLarge),
+      Text(user.displayName!, style: context.themeText.titleLarge),
       const SizedBox(height: 32),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +68,7 @@ class _TilesPersonalInformation extends StatelessWidget {
             },
             icon: Icons.email_outlined,
             title: 'Email',
-            subtitle: email ?? '',
+            subtitle: user.email,
           ),
           const SizedBox(height: 16),
           ProfileTile(
@@ -103,14 +81,14 @@ class _TilesPersonalInformation extends StatelessWidget {
             },
             icon: Icons.phone,
             title: 'Phone number',
-            subtitle: phoneNumber ?? '',
+            subtitle: user.email,
           ),
           const SizedBox(height: 16),
           ProfileTile(
             onTap: () {},
             icon: Icons.map_outlined,
             title: 'Addres',
-            subtitle: addres ?? '',
+            subtitle: user.email,
           ),
         ],
       ),

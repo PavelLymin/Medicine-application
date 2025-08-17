@@ -7,7 +7,6 @@ import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart'
 import 'package:medicine_application/data/repository/auth_repository.dart';
 import 'package:medicine_application/data/repository/chat_repository.dart';
 import 'package:medicine_application/initialization/dependency/dependency_container.dart';
-
 import '../../data/repository/message_repository.dart';
 import '../../data/ws_client_service/message_websocket_service.dart';
 
@@ -23,6 +22,7 @@ class CompositionRoot {
       repository: authRepository,
       firebaseAuth: firebaseAuth,
     );
+
     final dio = Dio(
       BaseOptions(headers: {'user_id': firebaseAuth.currentUser?.uid}),
     );

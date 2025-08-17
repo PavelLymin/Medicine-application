@@ -58,6 +58,24 @@ class AuthenticatedUser implements UserEntity {
     email: user.email,
   );
 
+  factory AuthenticatedUser.fromJson(Map<String, dynamic> json) {
+    return AuthenticatedUser(
+      uid: json['uid'] as String? ?? '',
+      displayName: json['display_name'] as String?,
+      photoURL: json['photo_url'] as String?,
+      email: json['email'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'display_name': displayName,
+      'photo_url': photoURL,
+      'email': email,
+    };
+  }
+
   @override
   bool get isAuthenticated => !isNotAuthenticated;
 

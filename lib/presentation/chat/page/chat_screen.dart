@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/web.dart';
-import 'package:medicine_application/common/bloc/chat_bloc/chat_bloc.dart';
+import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart';
 import 'package:medicine_application/main.dart';
+import '../../../common/ui.dart';
+import '../widget/input_messsage.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -12,88 +12,104 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late Logger _logger;
-  late ChatBloc _bloc;
+  late MessageBloc _bloc;
+  final _messageController = TextEditingController();
+  final _messageFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _logger = DepenciesScope.of(context).logger;
-    _logger.i('Welcome to chat screen!');
-    _bloc = DepenciesScope.of(context).chatBloc;
-    _bloc.add(ChatEvent.loadChats());
+    _bloc = DepenciesScope.of(context).messageBloc;
+    _bloc.add(MessageEvent.load(chatId: 1));
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _messageFocusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _bloc,
-      child: CustomScrollView(
-        slivers: [
-          const SliverAppBar(title: Text('Chats')),
-          BlocBuilder<ChatBloc, ChatState>(
-            builder: (context, state) {
-              return state.maybeMap(
-                orElse: () =>
-                    const SliverToBoxAdapter(child: SizedBox.shrink()),
-                loaded: (state) => SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: state.chats.length,
-                    (context, index) {
-                      final chat = state.chats[index];
-                      return ListTile(title: Text(chat.lastMessage.toString()));
-                    },
+      child: BlocBuilder<MessageBloc, MessageState>(
+        builder: (context, state) {
+          return state.maybeMap(
+            orElse: () => Scaffold(
+              body: const Center(child: CircularProgressIndicator()),
+            ),
+            loaded: (state) => Scaffold(
+              appBar: AppBar(title: const Text('User'), centerTitle: false),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 8,
+                      ),
+                      child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (context, index) =>
+                            SentMessage(message: 'message'),
+                      ),
+                    ),
                   ),
-                ),
-                error: (_) => const SliverToBoxAdapter(
-                  child: Text('Произошла ошибка. Попробуйте позже'),
-                ),
-              );
-            },
-          ),
-        ],
+                  SafeArea(
+                    child: InputMesssage(
+                      messageController: _messageController,
+                      messageFocusNode: _messageFocusNode,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            error: (state) => Scaffold(body: Center(child: Text(state.error))),
+          );
+        },
       ),
     );
   }
 }
 
-class _ChatList extends StatefulWidget {
-  const _ChatList();
+class SentMessage extends StatelessWidget {
+  const SentMessage({super.key, required this.message});
+
+  final String message;
 
   @override
-  State<_ChatList> createState() => _ChatListState();
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerRight,
+    child: Container(
+      margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.green,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(message),
+    ),
+  );
 }
 
-class _ChatListState extends State<_ChatList> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ChatBloc>().add(ChatEvent.loadChats());
-  }
+class ResentMessage extends StatelessWidget {
+  const ResentMessage({super.key, required this.message});
+
+  final String message;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ChatBloc, ChatState>(
-      builder: (context, state) {
-        return state.maybeMap(
-          orElse: () => Container(),
-          loading: (_) => const Center(child: CircularProgressIndicator()),
-          error: (state) =>
-              const Center(child: Text('Произoшла ошибка. Попробуйте позже')),
-          loaded: (state) => ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: state.chats.length,
-            itemBuilder: (context, index) {
-              final chat = state.chats[index];
-              return ListTile(
-                title: Text('Chat ${chat.lastMessage}'),
-                onTap: () {},
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.grey,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(message),
+    ),
+  );
 }

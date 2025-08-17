@@ -31,13 +31,13 @@ sealed class MessageState {
     _MessageError s => error(s),
   };
 
-  R maybeMap<R>(
+  R maybeMap<R>({
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoading>? loading,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoaded>? loaded,
     // ignore: library_private_types_in_public_api
-    MatchingState<R, _MessageError>? error, {
+    MatchingState<R, _MessageError>? error,
     required R Function() orElse,
   }) => map<R>(
     loading: loading ?? (_) => orElse(),
