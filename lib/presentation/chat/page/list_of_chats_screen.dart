@@ -16,48 +16,42 @@ class ListOfChatsScreen extends StatefulWidget {
 
 class _ListOfChatsScreenState extends State<ListOfChatsScreen> {
   late Logger _logger;
-  late ChatBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _logger = DepenciesScope.of(context).logger;
     _logger.i('Welcome to chat screen!');
-    _bloc = DepenciesScope.of(context).chatBloc;
-    _bloc.add(ChatEvent.loadChats());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _bloc,
-      child: CustomScrollView(
-        slivers: [
-          const SliverAppBar(title: Text('Chats'), stretch: true, pinned: true),
-          SliverPadding(
-            padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
-            sliver: BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                return state.maybeMap(
-                  orElse: () =>
-                      const SliverToBoxAdapter(child: SizedBox.shrink()),
-                  loaded: (state) => SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      childCount: state.chats.length,
-                      (context, index) {
-                        final chat = state.chats[index];
-                        return ChatTile(chat: chat, user: chat.interlocutor);
-                      },
-                    ),
+    return CustomScrollView(
+      slivers: [
+        const SliverAppBar(title: Text('Chats'), stretch: true, pinned: true),
+        SliverPadding(
+          padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
+          sliver: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return state.maybeMap(
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
+                loaded: (state) => SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: state.chats.length,
+                    (context, index) {
+                      final chat = state.chats[index];
+                      return ChatTile(chat: chat, user: chat.interlocutor);
+                    },
                   ),
-                  error: (e) =>
-                      SliverToBoxAdapter(child: Center(child: Text(e.message))),
-                );
-              },
-            ),
+                ),
+                error: (e) =>
+                    SliverToBoxAdapter(child: Center(child: Text(e.message))),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

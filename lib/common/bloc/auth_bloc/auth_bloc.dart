@@ -18,7 +18,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
     _streamSubscription = _firebaseAuth.userChanges().listen(
       (userOrNull) {
         if (userOrNull == null) {
-          setState(_NotAuthenticated(user: const NotAuthenticatedUser()));
+          setState(const _NotAuthenticated(user: NotAuthenticatedUser()));
         } else {
           setState(
             _Authenticated(user: AuthenticatedUser.fromFirebase(userOrNull)),

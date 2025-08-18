@@ -23,9 +23,7 @@ class CompositionRoot {
       firebaseAuth: firebaseAuth,
     );
 
-    final dio = Dio(
-      BaseOptions(headers: {'user_id': firebaseAuth.currentUser?.uid}),
-    );
+    final dio = Dio();
 
     final chatRepository = ChatRepository(dio: dio);
     final chatBloc = ChatBloc(chatRepository: chatRepository);

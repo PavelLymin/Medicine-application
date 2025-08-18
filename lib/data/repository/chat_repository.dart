@@ -5,7 +5,7 @@ import 'package:medicine_application/common/constant/config.dart';
 import 'package:medicine_application/model/chat_entity.dart';
 
 abstract class IChatRepository {
-  Future<List<FullChatEntity>> fetchChatByUserId();
+  Future<List<FullChatEntity>> fetchChatByUserId({required String userId});
 }
 
 class ChatRepository implements IChatRepository {
@@ -14,7 +14,10 @@ class ChatRepository implements IChatRepository {
   final Dio _dio;
 
   @override
-  Future<List<FullChatEntity>> fetchChatByUserId() async {
+  Future<List<FullChatEntity>> fetchChatByUserId({
+    required String userId,
+  }) async {
+    _dio.options.headers['user_id'] = userId;
     Response response = await _dio.get('${Config.apiBaseUrl}/chats');
 
     if (response.statusCode != 200) {

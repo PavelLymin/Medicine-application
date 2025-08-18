@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logger/web.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/common/bloc/chat_bloc/chat_bloc.dart';
 import 'package:medicine_application/common/constant/config.dart';
 import 'package:medicine_application/firebase_options.dart';
 import 'package:medicine_application/initialization/dependency/dependency_container.dart';
@@ -17,9 +15,6 @@ void main([List<String>? args]) => runZonedGuarded<void>(
   () async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    final logger = Logger();
-    logger.d("Logger is working!");
-
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -28,6 +23,7 @@ void main([List<String>? args]) => runZonedGuarded<void>(
     await googleSignIn.initialize(serverClientId: Config.serverClientId);
 
     final dependencyContainer = await CompositionRoot().compose();
+
     runApp(
       DepenciesScope(dependencyContainer: dependencyContainer, child: MyApp()),
     );
@@ -72,21 +68,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late AppRouter appRouter;
   late AuthenticationBloc _authenticationBloc;
-  late ChatBloc _chatBloc;
 
   @override
   void initState() {
     super.initState();
     _authenticationBloc = DepenciesScope.of(context).authenticationBloc;
     appRouter = AppRouter(authenticationBloc: _authenticationBloc);
-    _chatBloc = DepenciesScope.of(context).chatBloc;
   }
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
     providers: [
       BlocProvider(create: (context) => _authenticationBloc),
-      BlocProvider(create: (context) => _chatBloc),
+      BlocProvider(create: (context) => DepenciesScope.of(context).chatBloc),
     ],
     child: MaterialApp.router(
       routerConfig: appRouter.config(),
