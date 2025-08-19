@@ -25,11 +25,15 @@ class CompositionRoot {
 
     final dio = Dio();
 
+    final messageWebSocketService = MessageWebSocketService();
+
     final chatRepository = ChatRepository(dio: dio);
-    final chatBloc = ChatBloc(chatRepository: chatRepository);
+    final chatBloc = ChatBloc(
+      chatRepository: chatRepository,
+      messageWebSocketService: messageWebSocketService,
+    );
 
     final messageRepository = MessageRepository(dio: dio);
-    final messageWebSocketService = MessageWebSocketService();
     final messageBloc = MessageBloc(
       messageWebSocketService: messageWebSocketService,
       messageRepository: messageRepository,

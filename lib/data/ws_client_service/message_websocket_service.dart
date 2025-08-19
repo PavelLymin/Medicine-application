@@ -1,7 +1,33 @@
+import 'dart:convert';
 import 'package:medicine_application/model/message_entity.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
 import '../../common/constant/config.dart';
+
+enum RequestType {
+  message('message'),
+  chat('chat');
+
+  const RequestType(this.value);
+  final String value;
+}
+
+enum MessageRequestType {
+  newMessage('message_send'),
+  messageUpdate('message_update'),
+  messageDelete('message_delete'),
+  messageError('message_error');
+
+  const MessageRequestType(this.value);
+  final String value;
+
+  factory MessageRequestType.fromString(String value) =>
+      MessageRequestType.values.firstWhere(
+        (type) => type.value == value.trim().toLowerCase(),
+        orElse: () =>
+            throw ArgumentError('Unknown message request type: $value'),
+      );
+}
 
 abstract interface class IMessageWebSocketService {
   Future<void> disconnect();
@@ -25,10 +51,22 @@ class MessageWebSocketService implements IMessageWebSocketService {
   Stream<dynamic> get stream => _stream;
 
   void _intit() {
-    _channel = WebSocketChannel.connect(
-      Uri.parse('${Config.wsBaseUrl}/ws/connection'),
+    _channel = IOWebSocketChannel.connect(
+      Uri.parse('${Config.wsBaseUrl}/connection'),
+      headers: {'user_id': '1'},
     );
+
     _stream = _channel.stream.asBroadcastStream();
+  }
+
+  @override
+  Future<void> sendMessage({required CreatedMessageEntity message}) async {
+    final request = {
+      'request_type': RequestType.message.value,
+      'type': MessageRequestType.newMessage.value,
+      'message': message.toJson(),
+    };
+    _channel.sink.add(jsonEncode(request));
   }
 
   @override
@@ -37,17 +75,12 @@ class MessageWebSocketService implements IMessageWebSocketService {
     required int chatId,
   }) async {
     final request = {
-      'type': 'message_delete',
+      'request_type': RequestType.message.value,
+      'type': MessageRequestType.messageDelete.value,
       'message_id': messageId,
       'chat_id': chatId,
     };
-    _channel.sink.add(request);
-  }
-
-  @override
-  Future<void> sendMessage({required CreatedMessageEntity message}) async {
-    final request = {'type': 'new_message', 'message': message.toJson()};
-    _channel.sink.add(request);
+    _channel.sink.add(jsonEncode(request));
   }
 
   @override

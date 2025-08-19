@@ -2,9 +2,9 @@ import 'package:medicine_application/model/message_entity.dart';
 
 enum MessageResponseType {
   newMessage('new_message'),
-  messageUpdate('message_update'),
-  messageDelete('message_delete'),
-  messageError('message_error');
+  messageUpdate('updated_message'),
+  messageDelete('deleted_message'),
+  messageError('error');
 
   const MessageResponseType(this.value);
 
@@ -19,16 +19,16 @@ enum MessageResponseType {
   }
 }
 
-sealed class MessageResponse {
-  const MessageResponse({required this.type});
+sealed class MessageResponseHandler {
+  const MessageResponseHandler({required this.type});
 
   final MessageResponseType type;
 
-  factory MessageResponse.response(
+  factory MessageResponseHandler.response(
     Map<String, dynamic> json,
     List<FullMessageEntity> messages,
   ) {
-    final type = MessageResponseType.from(json['type'] as String?);
+    final type = MessageResponseType.from(json['type'] as String);
     switch (type) {
       case MessageResponseType.newMessage:
         return NewMessageResponse.response(json, messages);
@@ -42,7 +42,7 @@ sealed class MessageResponse {
   }
 }
 
-class NewMessageResponse extends MessageResponse {
+class NewMessageResponse extends MessageResponseHandler {
   const NewMessageResponse({
     required this.messages,
     super.type = MessageResponseType.newMessage,
@@ -60,7 +60,7 @@ class NewMessageResponse extends MessageResponse {
   }
 }
 
-class MessageUpdateResponse extends MessageResponse {
+class MessageUpdateResponse extends MessageResponseHandler {
   MessageUpdateResponse({
     required this.messages,
     super.type = MessageResponseType.messageUpdate,
@@ -86,7 +86,7 @@ class MessageUpdateResponse extends MessageResponse {
   }
 }
 
-class MessageDeleteResponse extends MessageResponse {
+class MessageDeleteResponse extends MessageResponseHandler {
   MessageDeleteResponse({
     required this.messages,
     super.type = MessageResponseType.messageDelete,
@@ -107,7 +107,7 @@ class MessageDeleteResponse extends MessageResponse {
   }
 }
 
-class MessageErrorResponse extends MessageResponse {
+class MessageErrorResponse extends MessageResponseHandler {
   MessageErrorResponse({
     required this.error,
     super.type = MessageResponseType.messageError,

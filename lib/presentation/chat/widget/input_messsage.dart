@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart';
 import 'package:medicine_application/common/components/theme/theme.dart';
+import 'package:medicine_application/model/chat_entity.dart';
+import 'package:medicine_application/model/message_entity.dart';
 
 class InputMesssage extends StatelessWidget {
   const InputMesssage({
     super.key,
     required this.messageController,
     required this.messageFocusNode,
+    required this.chat,
   });
 
   final TextEditingController messageController;
   final FocusNode messageFocusNode;
+  final FullChatEntity chat;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.attach_file, color: AppColors.green, size: 36),
-          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(
+              Icons.attach_file,
+              color: AppColors.green,
+              size: 36,
+            ),
+            onPressed: () {},
+          ),
           Expanded(
             child: TextField(
               controller: messageController,
@@ -36,8 +50,21 @@ class InputMesssage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          const Icon(Icons.send, color: AppColors.green, size: 36),
+          IconButton(
+            icon: const Icon(Icons.send, color: AppColors.green, size: 36),
+            onPressed: () {
+              if (messageController.text.isEmpty) return;
+              final message = CreatedMessageEntity(
+                chatId: chat.id,
+                senderId: chat.interlocutor.uid,
+                content: messageController.text,
+                createdAt: DateTime.now(),
+              );
+              context.read<MessageBloc>().add(
+                MessageEvent.send(message: message),
+              );
+            },
+          ),
         ],
       ),
     );

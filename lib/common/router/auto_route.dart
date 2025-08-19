@@ -33,7 +33,8 @@ class AppRouter extends RootStackRouter {
     ),
     NamedRouteDef(
       name: 'ChatScreen',
-      builder: (context, _) => const ChatScreen(),
+      builder: (context, data) =>
+          ChatScreen(chatEntity: data.params.get('chatEntity')),
     ),
     NamedRouteDef(
       initial: true,

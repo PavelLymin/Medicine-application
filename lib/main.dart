@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:medicine_application/common/bloc/auth_bloc/auth_bloc.dart';
+import 'package:medicine_application/common/bloc/chat_bloc/chat_bloc.dart';
 import 'package:medicine_application/common/constant/config.dart';
 import 'package:medicine_application/firebase_options.dart';
 import 'package:medicine_application/initialization/dependency/dependency_container.dart';
@@ -68,19 +69,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late AppRouter appRouter;
   late AuthenticationBloc _authenticationBloc;
+  late ChatBloc _chatBloc;
 
   @override
   void initState() {
     super.initState();
     _authenticationBloc = DepenciesScope.of(context).authenticationBloc;
     appRouter = AppRouter(authenticationBloc: _authenticationBloc);
+    _chatBloc = DepenciesScope.of(context).chatBloc;
   }
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
     providers: [
       BlocProvider(create: (context) => _authenticationBloc),
-      BlocProvider(create: (context) => DepenciesScope.of(context).chatBloc),
+      BlocProvider(create: (context) => _chatBloc),
     ],
     child: MaterialApp.router(
       routerConfig: appRouter.config(),

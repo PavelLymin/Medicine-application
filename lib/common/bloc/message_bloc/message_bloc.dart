@@ -19,7 +19,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> with _SetStateMixin {
     _streamSubscription = _messageWebSocketService.stream.listen((data) {
       final json = jsonDecode(data) as Map<String, dynamic>;
 
-      final response = MessageResponse.response(json, _messages);
+      final response = MessageResponseHandler.response(json, _messages);
       switch (response) {
         case NewMessageResponse response:
           setState(MessageState.loaded(messages: response.messages));

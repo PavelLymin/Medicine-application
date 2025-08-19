@@ -5,6 +5,7 @@ sealed class MessageEntity {
     required int chatId,
     required String senderId,
     required String content,
+    required DateTime createdAt,
     bool isRead,
   }) = CreatedMessageEntity;
 
@@ -23,12 +24,14 @@ class CreatedMessageEntity extends MessageEntity {
     required this.chatId,
     required this.senderId,
     required this.content,
+    required this.createdAt,
     this.isRead = false,
   });
 
   final int chatId;
   final String senderId;
   final String content;
+  final DateTime createdAt;
   final bool isRead;
 
   @override
@@ -41,6 +44,7 @@ class CreatedMessageEntity extends MessageEntity {
       chatId: json['chat_id'] as int,
       senderId: json['sender_id'] as String,
       content: json['content'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
       isRead: json['is_read'] as bool? ?? false,
     );
   }
@@ -50,6 +54,7 @@ class CreatedMessageEntity extends MessageEntity {
       'chat_id': chatId,
       'sender_id': senderId,
       'content': content,
+      'created_at': createdAt.toIso8601String(),
       'is_read': isRead,
     };
   }
@@ -62,24 +67,27 @@ class CreatedMessageEntity extends MessageEntity {
         other.senderId == senderId &&
         other.chatId == chatId &&
         other.content == content &&
+        other.createdAt == createdAt &&
         other.isRead == isRead;
   }
 
   @override
   int get hashCode {
-    return Object.hash(senderId, chatId, content, isRead);
+    return Object.hash(senderId, chatId, content, createdAt, isRead);
   }
 
   CreatedMessageEntity copyWith({
     int? chatId,
     String? senderId,
     String? content,
+    DateTime? createdAt,
     bool? isRead,
   }) {
     return CreatedMessageEntity(
       chatId: chatId ?? this.chatId,
       senderId: senderId ?? this.senderId,
       content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
       isRead: isRead ?? this.isRead,
     );
   }

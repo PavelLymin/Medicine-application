@@ -1,11 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_application/common/bloc/message_bloc/message_bloc.dart';
 import 'package:medicine_application/main.dart';
+import 'package:medicine_application/model/chat_entity.dart';
 import '../../../common/ui.dart';
 import '../widget/input_messsage.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, required this.chatEntity});
+
+  final FullChatEntity chatEntity;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -15,12 +19,14 @@ class _ChatScreenState extends State<ChatScreen> {
   late MessageBloc _bloc;
   final _messageController = TextEditingController();
   final _messageFocusNode = FocusNode();
+  late FullChatEntity chat;
 
   @override
   void initState() {
     super.initState();
+    chat = widget.chatEntity;
     _bloc = DepenciesScope.of(context).messageBloc;
-    _bloc.add(MessageEvent.load(chatId: 1));
+    _bloc.add(MessageEvent.load(chatId: chat.id));
   }
 
   @override
@@ -38,10 +44,17 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (context, state) {
           return state.maybeMap(
             orElse: () => Scaffold(
+              appBar: AppBar(
+                leading: BackButton(onPressed: () => context.router.pop()),
+              ),
               body: const Center(child: CircularProgressIndicator()),
             ),
             loaded: (state) => Scaffold(
-              appBar: AppBar(title: const Text('User'), centerTitle: false),
+              appBar: AppBar(
+                title: Text(chat.interlocutor.displayName ?? ''),
+                centerTitle: false,
+                leading: BackButton(onPressed: () => context.router.pop()),
+              ),
               body: Column(
                 children: [
                   Expanded(
@@ -51,9 +64,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         vertical: 8,
                       ),
                       child: ListView.builder(
-                        itemCount: 5,
+                        itemCount: state.messages.length,
                         itemBuilder: (context, index) =>
-                            SentMessage(message: 'message'),
+                            SentMessage(message: state.messages[index].content),
                       ),
                     ),
                   ),
@@ -61,6 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: InputMesssage(
                       messageController: _messageController,
                       messageFocusNode: _messageFocusNode,
+                      chat: chat,
                     ),
                   ),
                 ],

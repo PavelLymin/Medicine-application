@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:medicine_application/common/constant/config.dart';
 import 'package:medicine_application/model/chat_entity.dart';
