@@ -16,12 +16,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with ChatEventMixin {
     required IRealTimeRepository realTimeRepository,
   }) : _chatRepository = chatRepository,
        _realTimeRepository = realTimeRepository,
-       super(const ChatState.initial(chats: [])) {
+       super(const ChatState.loading(chats: [])) {
     _subscriptionWS = _realTimeRepository.stream.listen(
       (data) {
         try {
           final json = jsonDecode(data) as Map<String, dynamic>;
-
           if (json['request_type'] != RequestType.chat.value &&
               json['type'] != ChatResponseType.chatUpdate.value) {
             return;
@@ -52,10 +51,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with ChatEventMixin {
   }
 
   final IChatRepository _chatRepository;
+  final IRealTimeRepository _realTimeRepository;
 
   StreamSubscription? _subscriptionWS;
-
-  final IRealTimeRepository _realTimeRepository;
 
   Future<void> _loadChats(Emitter<ChatState> emit, _LoadChats e) async {
     try {

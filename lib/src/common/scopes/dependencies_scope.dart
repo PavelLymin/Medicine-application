@@ -2,8 +2,8 @@ import 'package:medicine_application/ui/ui.dart';
 
 import '../../feature/initialization/dependency/dependency_container.dart';
 
-class DepenciesScope extends InheritedWidget {
-  const DepenciesScope({
+class DependeciesScope extends InheritedWidget {
+  const DependeciesScope({
     required this.dependencyContainer,
     required super.child,
     super.key,
@@ -14,18 +14,18 @@ class DepenciesScope extends InheritedWidget {
   static DependencyContainer of(BuildContext context, {bool listen = false}) {
     if (listen) {
       return context
-          .dependOnInheritedWidgetOfExactType<DepenciesScope>()!
+          .dependOnInheritedWidgetOfExactType<DependeciesScope>()!
           .dependencyContainer;
     } else {
       final widget = context
-          .getElementForInheritedWidgetOfExactType<DepenciesScope>()!
+          .getElementForInheritedWidgetOfExactType<DependeciesScope>()!
           .widget;
 
-      return (widget as DepenciesScope).dependencyContainer;
+      return (widget as DependeciesScope).dependencyContainer;
     }
   }
 
   @override
-  bool updateShouldNotify(covariant DepenciesScope oldWidget) =>
+  bool updateShouldNotify(covariant DependeciesScope oldWidget) =>
       !identical(dependencyContainer, oldWidget.dependencyContainer);
 }

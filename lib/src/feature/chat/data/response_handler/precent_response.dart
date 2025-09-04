@@ -1,59 +1,68 @@
 import '../repository/precent_repository.dart';
 
-sealed class PrecentResponse {
-  const PrecentResponse({required this.state});
-  final PrecentState state;
+sealed class PresenceResponse {
+  const PresenceResponse({required this.state, required this.chatId});
+  final PrecentType state;
 
-  factory PrecentResponse.fromJson(Map<String, dynamic> json) {
-    final type = PrecentState.fromString(json['type'] as String);
+  final int chatId;
+
+  factory PresenceResponse.fromJson(Map<String, dynamic> json) {
+    final type = PrecentType.fromString(json['type'] as String);
 
     switch (type) {
-      case PrecentState.startTyping:
+      case PrecentType.startTyping:
         return StartTypingResponse.fromJson(json);
-      case PrecentState.stopTyping:
+      case PrecentType.stopTyping:
         return StopTypingResponse.fromJson(json);
-      case PrecentState.error:
-        return PrecentError.fromJson(json);
+      case PrecentType.setChatId:
+        return SetChatId.fromJson(json);
+      case PrecentType.error:
+        return PpesenceError.fromJson(json);
     }
   }
 }
 
-class StartTypingResponse extends PrecentResponse {
+class StartTypingResponse extends PresenceResponse {
   const StartTypingResponse({
-    super.state = PrecentState.startTyping,
-    required this.chatId,
+    super.state = PrecentType.startTyping,
+    required super.chatId,
   });
-
-  final int chatId;
 
   factory StartTypingResponse.fromJson(Map<String, dynamic> json) =>
       StartTypingResponse(chatId: json['chat_id'] as int);
 }
 
-class StopTypingResponse extends PrecentResponse {
+class StopTypingResponse extends PresenceResponse {
   const StopTypingResponse({
-    super.state = PrecentState.stopTyping,
-    required this.chatId,
+    super.state = PrecentType.stopTyping,
+    required super.chatId,
   });
-
-  final int chatId;
 
   factory StopTypingResponse.fromJson(Map<String, dynamic> json) =>
       StopTypingResponse(chatId: json['chat_id'] as int);
 }
 
-class PrecentError extends PrecentResponse {
-  const PrecentError({
-    super.state = PrecentState.error,
-    required this.chatId,
+class SetChatId extends PresenceResponse {
+  const SetChatId({
+    super.state = PrecentType.stopTyping,
+    required super.chatId,
+  });
+
+  factory SetChatId.fromJson(Map<String, dynamic> json) =>
+      SetChatId(chatId: json['chat_id'] as int);
+}
+
+class PpesenceError extends PresenceResponse {
+  const PpesenceError({
+    super.state = PrecentType.error,
+    required super.chatId,
     required this.error,
   });
 
-  final int chatId;
   final String error;
 
-  factory PrecentError.fromJson(Map<String, dynamic> json) {
-    return PrecentError(
+  factory PpesenceError.fromJson(Map<String, dynamic> json) {
+    return PpesenceError(
       chatId: json['chat_id'] as int,
       error: json['error'] as String,
     );

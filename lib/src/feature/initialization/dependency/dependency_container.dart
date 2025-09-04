@@ -1,18 +1,18 @@
 import 'package:logger/web.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/src/feature/chat/data/repository/precent_repository.dart';
-import 'package:medicine_application/src/feature/chat/state_management/message_bloc/message_bloc.dart';
-import 'package:medicine_application/src/feature/chat/data/repository/chat_repository.dart';
+import '../../authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import '../../chat/data/repository/real_time_repository.dart';
+import '../../chat/state_management/chat_bloc/chat_bloc.dart';
+import '../../chat/state_management/message_bloc/message_bloc.dart';
+import '../../chat/state_management/presence_bloc/presence_bloc.dart';
 
 class DependencyContainer {
   const DependencyContainer({
     required this.logger,
     required this.authenticationBloc,
     required this.realTimeRepository,
-    required this.chatRepository,
+    required this.chatBloc,
     required this.messageBloc,
-    required this.precentRepository,
+    required this.presenceBloc,
   });
 
   final Logger logger;
@@ -21,9 +21,9 @@ class DependencyContainer {
 
   final IRealTimeRepository realTimeRepository;
 
-  final IChatRepository chatRepository;
+  final ChatBloc chatBloc;
 
   final MessageBloc messageBloc;
 
-  final IPrecentRepository precentRepository;
+  final PresenceBloc presenceBloc;
 }

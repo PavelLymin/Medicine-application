@@ -1,35 +1,37 @@
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/src/common/constant/config.dart';
-import 'package:medicine_application/firebase_options.dart';
+import 'src/common/bloc/app_bloc_observer.dart';
 import 'src/common/router/auto_route.dart';
 import 'src/common/scopes/dependencies_scope.dart';
-import 'ui/ui.dart';
+import 'src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'src/feature/initialization/logic/composition_root.dart';
+import 'ui/ui.dart';
 
 @pragma('vm:entry-point')
-void main([List<String>? args]) => runZonedGuarded<void>(
-  () async {
-    WidgetsFlutterBinding.ensureInitialized();
+void main([List<String>? args]) async {
+  final logger = CreateAppLogger().create();
 
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-    await googleSignIn.initialize(serverClientId: Config.serverClientId);
+      final dependencyContainer = await CompositionRoot(
+        logger: logger,
+      ).compose();
 
-    final dependencyContainer = await CompositionRoot().compose();
+      Bloc.observer = AppBlocObserver(logger: logger);
 
-    runApp(
-      DepenciesScope(dependencyContainer: dependencyContainer, child: MyApp()),
-    );
-  },
-  (error, stackTrace) => print('$error\n$stackTrace'), // ignore: avoid_print
-);
+      runApp(
+        DependeciesScope(
+          dependencyContainer: dependencyContainer,
+          child: MyApp(),
+        ),
+      );
+    },
+    (error, stackTrace) =>
+        logger.e(error.toString(), error: error, stackTrace: stackTrace),
+  );
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -45,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _authenticationBloc = DepenciesScope.of(context).authenticationBloc;
+    _authenticationBloc = DependeciesScope.of(context).authenticationBloc;
     appRouter = AppRouter(authenticationBloc: _authenticationBloc);
   }
 

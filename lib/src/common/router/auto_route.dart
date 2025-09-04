@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/src/common/scopes/authentication_scope.dart';
 import 'package:medicine_application/src/feature/authentication/widget/signin.dart';
 import 'package:medicine_application/src/feature/chat/widget/list_of_chats_screen.dart';
 import 'package:medicine_application/src/feature/consultation/widget/consultations_screen.dart';
@@ -54,8 +53,7 @@ class AppRouter extends RootStackRouter {
         ),
         NamedRouteDef(
           name: 'ChatScreen',
-          builder: (context, _) =>
-              const AuthenticationScope(child: ListOfChatsScreen()),
+          builder: (context, _) => const ListOfChatsScreen(),
         ),
         NamedRouteDef(
           name: 'ConsultationsScreen',

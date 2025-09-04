@@ -35,7 +35,7 @@ class _AuthenticationScopeState extends State<AuthenticationScope> {
   @override
   void initState() {
     super.initState();
-    _bloc = DepenciesScope.of(context).authenticationBloc;
+    _bloc = DependeciesScope.of(context).authenticationBloc;
     _state = _bloc.state;
     _streamSubscription = _bloc.stream.listen((state) {
       if (state == _state) return;

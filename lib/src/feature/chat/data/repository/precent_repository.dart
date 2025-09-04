@@ -1,33 +1,36 @@
 import 'dart:convert';
 import 'real_time_repository.dart';
 
-enum PrecentState {
+enum PrecentType {
   startTyping('start_typing'),
   stopTyping('stop_typing'),
+  setChatId('set_chat_id'),
   error('error');
 
-  const PrecentState(this.value);
+  const PrecentType(this.value);
   final String value;
 
-  factory PrecentState.fromString(String? value) {
-    return PrecentState.values.firstWhere(
+  factory PrecentType.fromString(String? value) {
+    return PrecentType.values.firstWhere(
       (type) => type.value == value?.trim().toLowerCase(),
       orElse: () => throw ArgumentError('Unknown typing state: $value'),
     );
   }
 }
 
-abstract interface class IPrecentRepository {
+abstract interface class IPresenceRepository {
   Future<void> startTypingMessage({
     required int chatId,
     required String userId,
   });
 
   Future<void> stopTypingMessage({required int chatId, required String userId});
+
+  Future<void> setChatId({required int chatId});
 }
 
-class PrecentRepository implements IPrecentRepository {
-  const PrecentRepository({required IRealTimeRepository realTimeRepository})
+class PresenceRepository implements IPresenceRepository {
+  const PresenceRepository({required IRealTimeRepository realTimeRepository})
     : _realTimeRepository = realTimeRepository;
 
   final IRealTimeRepository _realTimeRepository;
@@ -40,7 +43,7 @@ class PrecentRepository implements IPrecentRepository {
     _realTimeRepository.channel.sink.add(
       jsonEncode({
         'request_type': RequestType.typing.value,
-        'type': PrecentState.startTyping.value,
+        'type': PrecentType.startTyping.value,
         'chat_id': chatId,
         'user_id': userId,
       }),
@@ -55,9 +58,20 @@ class PrecentRepository implements IPrecentRepository {
     _realTimeRepository.channel.sink.add(
       jsonEncode({
         'request_type': RequestType.typing.value,
-        'type': PrecentState.stopTyping.value,
+        'type': PrecentType.stopTyping.value,
         'chat_id': chatId,
         'user_id': userId,
+      }),
+    );
+  }
+
+  @override
+  Future<void> setChatId({required int chatId}) async {
+    _realTimeRepository.channel.sink.add(
+      jsonEncode({
+        'request_type': RequestType.typing.value,
+        'type': PrecentType.setChatId.value,
+        'chat_id': chatId,
       }),
     );
   }

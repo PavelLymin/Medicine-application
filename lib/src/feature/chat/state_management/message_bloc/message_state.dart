@@ -7,10 +7,6 @@ sealed class MessageState {
 
   final List<FullMessageEntity> messages;
 
-  const factory MessageState.initial({
-    required List<FullMessageEntity> messages,
-  }) = _MessageInitial;
-
   const factory MessageState.loading({
     required List<FullMessageEntity> messages,
   }) = _MessageLoading;
@@ -26,23 +22,18 @@ sealed class MessageState {
 
   R map<R>({
     // ignore: library_private_types_in_public_api
-    required MatchingState<R, _MessageInitial> initial,
-    // ignore: library_private_types_in_public_api
     required MatchingState<R, _MessageLoading> loading,
     // ignore: library_private_types_in_public_api
     required MatchingState<R, _MessageLoaded> loaded,
     // ignore: library_private_types_in_public_api
     required MatchingState<R, _MessageError> error,
   }) => switch (this) {
-    _MessageInitial s => initial(s),
     _MessageLoading s => loading(s),
     _MessageLoaded s => loaded(s),
     _MessageError s => error(s),
   };
 
   R maybeMap<R>({
-    // ignore: library_private_types_in_public_api
-    MatchingState<R, _MessageInitial>? initial,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoading>? loading,
     // ignore: library_private_types_in_public_api
@@ -51,7 +42,6 @@ sealed class MessageState {
     MatchingState<R, _MessageError>? error,
     required R Function() orElse,
   }) => map<R>(
-    initial: initial ?? (_) => orElse(),
     loading: loading ?? (_) => orElse(),
     loaded: loaded ?? (_) => orElse(),
     error: error ?? (_) => orElse(),
@@ -59,23 +49,16 @@ sealed class MessageState {
 
   R? mapOrNull<R>(
     // ignore: library_private_types_in_public_api
-    MatchingState<R, _MessageInitial>? initial,
-    // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoading>? loading,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoaded>? loaded,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageError>? error,
   ) => map<R?>(
-    initial: initial ?? (_) => null,
     loading: loading ?? (_) => null,
     loaded: loaded ?? (_) => null,
     error: error ?? (_) => null,
   );
-}
-
-final class _MessageInitial extends MessageState {
-  const _MessageInitial({required super.messages});
 }
 
 final class _MessageLoading extends MessageState {

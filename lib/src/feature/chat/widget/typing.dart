@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:medicine_application/src/feature/chat/state_management/precent_notify.dart/typing_notify.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../state_management/presence_bloc/presence_bloc.dart';
 
 class Typing extends StatelessWidget {
-  const Typing({
-    super.key,
-    required this.typingController,
-    required this.chatId,
-  });
-
-  final TypingController typingController;
+  const Typing({super.key, required this.chatId});
 
   final int chatId;
 
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: typingController,
-    builder: (BuildContext context, Widget? child) {
-      return typingController.state.maybeMap(
-        orElse: () => const SizedBox.shrink(),
-        startTyping: (controller) => const Text('Typing...'),
-        error: (state) => Text(state.error),
+  Widget build(BuildContext context) =>
+      BlocBuilder<PresenceBloc, PresenceState>(
+        builder: (context, state) {
+          return state.maybeMap(
+            orElse: () => const SizedBox.shrink(),
+            startTyping: (controller) => state.chatId == chatId
+                ? const Text('Typing...')
+                : const SizedBox.shrink(),
+          );
+        },
       );
-    },
-  );
 }

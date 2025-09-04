@@ -7,9 +7,6 @@ sealed class ChatState {
 
   final List<FullChatEntity> chats;
 
-  const factory ChatState.initial({required List<FullChatEntity> chats}) =
-      _Initial;
-
   const factory ChatState.loading({required List<FullChatEntity> chats}) =
       _Loading;
 
@@ -23,8 +20,6 @@ sealed class ChatState {
 
   R map<R>({
     // ignore: library_private_types_in_public_api
-    required ChatStateMatch<R, _Initial> initial,
-    // ignore: library_private_types_in_public_api
     required ChatStateMatch<R, _Loading> loading,
     // ignore: library_private_types_in_public_api
     required ChatStateMatch<R, _Loaded> loaded,
@@ -32,7 +27,6 @@ sealed class ChatState {
     required ChatStateMatch<R, _Error> error,
   }) {
     return switch (this) {
-      _Initial e => initial(e),
       _Loading e => loading(e),
       _Loaded e => loaded(e),
       _Error e => error(e),
@@ -41,8 +35,7 @@ sealed class ChatState {
 
   R maybeMap<R>({
     required R Function() orElse,
-    // ignore: library_private_types_in_public_api
-    ChatStateMatch<R, _Initial>? initial,
+
     // ignore: library_private_types_in_public_api
     ChatStateMatch<R, _Loading>? loading,
     // ignore: library_private_types_in_public_api
@@ -51,7 +44,6 @@ sealed class ChatState {
     ChatStateMatch<R, _Error>? error,
   }) {
     return map<R>(
-      initial: initial ?? (_) => orElse(),
       loading: loading ?? (_) => orElse(),
       loaded: loaded ?? (_) => orElse(),
       error: error ?? (_) => orElse(),
@@ -60,8 +52,6 @@ sealed class ChatState {
 
   R? mapOrNull<R>({
     // ignore: library_private_types_in_public_api
-    ChatStateMatch<R, _Initial>? initial,
-    // ignore: library_private_types_in_public_api
     ChatStateMatch<R, _Loading>? loading,
     // ignore: library_private_types_in_public_api
     ChatStateMatch<R, _Loaded>? loaded,
@@ -69,16 +59,11 @@ sealed class ChatState {
     ChatStateMatch<R, _Error>? error,
   }) {
     return map<R?>(
-      initial: initial ?? (_) => null,
       loading: loading ?? (_) => null,
       loaded: loaded ?? (_) => null,
       error: error ?? (_) => null,
     );
   }
-}
-
-final class _Initial extends ChatState {
-  const _Initial({required super.chats});
 }
 
 final class _Loading extends ChatState {

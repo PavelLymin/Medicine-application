@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/chat/state_management/message_bloc/message_bloc.dart';
-import 'package:medicine_application/src/feature/chat/model/chat_entity.dart';
-import 'package:medicine_application/src/feature/chat/state_management/precent_notify.dart/typing_notify.dart';
-import 'package:medicine_application/src/feature/chat/widget/typing.dart';
 import '../../../common/scopes/dependencies_scope.dart';
 import '../../../../ui/ui.dart';
+import '../model/chat_entity.dart';
+import '../state_management/message_bloc/message_bloc.dart';
+import '../state_management/presence_bloc/presence_bloc.dart';
 import 'input_messsage.dart';
+import 'typing.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.chatEntity});
@@ -21,48 +21,50 @@ class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final _messageFocusNode = FocusNode();
   late FullChatEntity _chat;
-  late MessageBloc _bloc;
-  late TypingController _typingController;
+  late MessageBloc _messageBloc;
+  late PresenceBloc _presenceBloc;
 
   @override
   void initState() {
     super.initState();
     _chat = widget.chatEntity;
-    _bloc = DepenciesScope.of(context).messageBloc;
-
-    _typingController = TypingController(
-      realTimeRepository: DepenciesScope.of(context).realTimeRepository,
-      precentRepository: DepenciesScope.of(context).precentRepository,
-    );
-
-    DepenciesScope.of(context).authenticationBloc.state.currentUser.map(
+    _messageBloc = DependeciesScope.of(context).messageBloc;
+    _presenceBloc = DependeciesScope.of(context).presenceBloc;
+    DependeciesScope.of(context).authenticationBloc.state.currentUser.map(
       notAuthenticatedUser: (_) {},
       authenticatedUser: (user) {
-        _bloc.add(MessageEvent.load(chatId: _chat.id, userId: user.uid));
-
-        _messageController.addListener(
-          () async => await _typingController.onTextChanged(
-            user.uid,
-            _chat.id,
-            _messageController.text,
-          ),
-        );
+        _messageBloc.add(MessageEvent.load(chatId: _chat.id, userId: user.uid));
+        _onTextChanged(_chat.id, user.uid);
       },
     );
+  }
+
+  void _onTextChanged(int chatId, String userId) {
+    _messageController.addListener(() {
+      _presenceBloc.add(
+        PresenceEvent.onTextChangedEvent(
+          userId: userId,
+          chatId: chatId,
+          text: _messageController.text,
+        ),
+      );
+    });
   }
 
   @override
   void dispose() {
     _messageController.dispose();
     _messageFocusNode.dispose();
-    _typingController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _bloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _messageBloc),
+        BlocProvider.value(value: _presenceBloc),
+      ],
       child: BlocBuilder<MessageBloc, MessageState>(
         builder: (context, state) {
           return state.maybeMap(
@@ -93,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  Typing(typingController: _typingController, chatId: _chat.id),
+                  Typing(chatId: _chat.id),
                   SafeArea(
                     child: InputMesssage(
                       messageController: _messageController,
@@ -104,7 +106,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
-            error: (state) => Scaffold(body: Center(child: Text(state.error))),
+            error: (state) => Scaffold(
+              appBar: AppBar(
+                title: Text(_chat.interlocutor.displayName ?? ''),
+                centerTitle: false,
+                leading: BackButton(onPressed: () => context.router.pop()),
+              ),
+              body: Center(child: Text(state.error)),
+            ),
           );
         },
       ),

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/chat/data/repository/message_repository.dart';
+import '../../data/repository/message_repository.dart';
 import '../../data/response_handler/message_response.dart';
 import '../../data/repository/real_time_repository.dart';
 import '../../model/message_entity.dart';
@@ -15,7 +15,40 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> with _SetStateMixin {
     required IMessageRepository messageRepository,
   }) : _realTimeRepository = realTimeRepository,
        _messageRepository = messageRepository,
-       super(MessageState.initial(messages: [])) {
+       super(MessageState.loading(messages: [])) {
+    on<MessageEvent>((event, emit) async {
+      await event.map(
+        load: (e) => _load(emit, e),
+        send: (e) => _send(emit, e),
+        delete: (e) => _delete(emit, e),
+      );
+    });
+  }
+
+  final IRealTimeRepository _realTimeRepository;
+  final IMessageRepository _messageRepository;
+
+  StreamSubscription<dynamic>? _streamSubscription;
+
+  Future<void> _load(Emitter<MessageState> emit, _MessageLoad e) async {
+    try {
+      _streamSubscription?.cancel();
+      _streamSubscription = null;
+
+      final messages = await _messageRepository.fetchMessages(
+        chatId: e.chatId,
+        userId: e.userId,
+      );
+
+      emit(MessageState.loaded(messages: messages));
+
+      _streamHandler(e.chatId);
+    } catch (e) {
+      emit(MessageState.error(error: e.toString(), messages: state.messages));
+    }
+  }
+
+  void _streamHandler(int chatId) {
     _streamSubscription = _realTimeRepository.stream.listen(
       (data) {
         try {
@@ -27,6 +60,9 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> with _SetStateMixin {
             json,
             state.messages,
           );
+
+          if (response.chatId != chatId) return;
+
           switch (response) {
             case NewMessageResponse response:
               setState(MessageState.loaded(messages: response.messages));
@@ -54,33 +90,6 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> with _SetStateMixin {
         );
       },
     );
-    on<MessageEvent>((event, emit) async {
-      await event.map(
-        load: (e) => _load(emit, e),
-        send: (e) => _send(emit, e),
-        delete: (e) => _delete(emit, e),
-      );
-    });
-  }
-  StreamSubscription<dynamic>? _streamSubscription;
-
-  final IRealTimeRepository _realTimeRepository;
-
-  final IMessageRepository _messageRepository;
-
-  Future<void> _load(Emitter<MessageState> emit, _MessageLoad e) async {
-    try {
-      emit(MessageState.loading(messages: state.messages));
-
-      final messages = await _messageRepository.fetchMessages(
-        chatId: e.chatId,
-        userId: e.userId,
-      );
-
-      emit(MessageState.loaded(messages: messages));
-    } catch (e) {
-      emit(MessageState.error(error: e.toString(), messages: state.messages));
-    }
   }
 
   Future<void> _send(Emitter<MessageState> emit, _MessageSend e) async {

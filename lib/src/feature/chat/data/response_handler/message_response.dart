@@ -1,4 +1,4 @@
-import 'package:medicine_application/src/feature/chat/model/message_entity.dart';
+import '../../model/message_entity.dart';
 
 enum MessageResponseType {
   newMessage('new_message'),
@@ -20,9 +20,10 @@ enum MessageResponseType {
 }
 
 sealed class MessageResponseHandler {
-  const MessageResponseHandler({required this.type});
+  const MessageResponseHandler({required this.type, required this.chatId});
 
   final MessageResponseType type;
+  final int chatId;
 
   factory MessageResponseHandler.response(
     Map<String, dynamic> json,
@@ -45,6 +46,7 @@ sealed class MessageResponseHandler {
 class NewMessageResponse extends MessageResponseHandler {
   const NewMessageResponse({
     required this.messages,
+    required super.chatId,
     super.type = MessageResponseType.newMessage,
   });
 
@@ -56,13 +58,17 @@ class NewMessageResponse extends MessageResponseHandler {
   ) {
     final message = FullMessageEntity.fromJson(json['message']);
     messages.add(message);
-    return NewMessageResponse(messages: List.from(messages));
+    return NewMessageResponse(
+      messages: List.from(messages),
+      chatId: message.chatId,
+    );
   }
 }
 
 class MessageUpdateResponse extends MessageResponseHandler {
   MessageUpdateResponse({
     required this.messages,
+    required super.chatId,
     super.type = MessageResponseType.messageUpdate,
   });
 
@@ -82,13 +88,17 @@ class MessageUpdateResponse extends MessageResponseHandler {
       }
     }).toList();
 
-    return MessageUpdateResponse(messages: List.from(messages));
+    return MessageUpdateResponse(
+      messages: List.from(messages),
+      chatId: message.chatId,
+    );
   }
 }
 
 class MessageDeleteResponse extends MessageResponseHandler {
   MessageDeleteResponse({
     required this.messages,
+    required super.chatId,
     super.type = MessageResponseType.messageDelete,
   });
 
@@ -103,19 +113,23 @@ class MessageDeleteResponse extends MessageResponseHandler {
 
     messages.removeWhere((row) => row.id == messageId && row.chatId == chatId);
 
-    return MessageDeleteResponse(messages: List.from(messages));
+    return MessageDeleteResponse(messages: List.from(messages), chatId: chatId);
   }
 }
 
 class MessageErrorResponse extends MessageResponseHandler {
   MessageErrorResponse({
     required this.error,
+    required super.chatId,
     super.type = MessageResponseType.messageError,
   });
 
   final String error;
 
   factory MessageErrorResponse.fromJson(Map<String, dynamic> json) {
-    return MessageErrorResponse(error: json['error'] as String);
+    return MessageErrorResponse(
+      error: json['error'] as String,
+      chatId: json['chat_id'] as int,
+    );
   }
 }

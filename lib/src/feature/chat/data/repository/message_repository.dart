@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:medicine_application/src/feature/chat/data/repository/real_time_repository.dart';
-import 'package:medicine_application/src/feature/chat/model/message_entity.dart';
 import '../../../../common/constant/config.dart';
+import '../../model/message_entity.dart';
+import 'real_time_repository.dart';
 
 enum MessageRequestType {
   newMessage('message_send'),
