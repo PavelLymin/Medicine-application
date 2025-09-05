@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/src/common/extensions/build_context.dart';
-import 'package:medicine_application/ui/ui.dart';
-import 'package:medicine_application/src/feature/authentication/model/user_entity.dart';
-import 'package:medicine_application/src/feature/profile/widget/update_email_screen.dart';
-import 'package:medicine_application/src/feature/profile/widget/update_phone_number_screen.dart';
+import '../../../../ui/ui.dart';
+import '../../authentication/model/user_entity.dart';
+import '../../authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'profile_tile.dart';
+import 'update_email_screen.dart';
+import 'update_phone_number_screen.dart';
 
 class PersonalInformation extends StatelessWidget {
   const PersonalInformation({super.key});
@@ -51,12 +51,15 @@ class _TilesPersonalInformation extends StatelessWidget {
         ],
       ),
       const SizedBox(height: 24),
-      Text(user.displayName!, style: context.themeText.titleLarge),
+      Text(user.displayName!, style: context.extentions.themeText.titleLarge),
       const SizedBox(height: 32),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Personal Information', style: context.themeText.titleMedium),
+          Text(
+            'Personal Information',
+            style: context.extentions.themeText.titleMedium,
+          ),
           const SizedBox(height: 16),
           ProfileTile(
             onTap: () {

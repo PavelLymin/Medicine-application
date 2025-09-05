@@ -15,7 +15,13 @@ class Typing extends StatelessWidget {
           return state.maybeMap(
             orElse: () => const SizedBox.shrink(),
             startTyping: (controller) => state.chatId == chatId
-                ? const Text('Typing...')
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    child: const Text('Typing...'),
+                  )
                 : const SizedBox.shrink(),
           );
         },

@@ -39,7 +39,7 @@ ThemeData createDarkTheme() {
         foregroundColor: WidgetStatePropertyAll(AppColors.white),
       ),
     ),
-    inputDecorationTheme: createInputTheme(),
-    extensions: [ThemeColors.light],
+    inputDecorationTheme: createInputTheme(AppColors.darkGrey),
+    extensions: [ThemeColors.light, ThemeDecorationInput.dark],
   );
 }

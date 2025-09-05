@@ -25,7 +25,7 @@ class AuthAgreement extends StatelessWidget {
             Expanded(
               child: Text(
                 'I consent to the processing of personal data,the use of cokies, agree to the terms and conditions,and aknowledge the privacy policy.',
-                style: context.themeText.bodyMedium,
+                style: context.extentions.themeText.bodyMedium,
               ),
             ),
           ],
@@ -36,7 +36,7 @@ class AuthAgreement extends StatelessWidget {
             Expanded(
               child: Text(
                 'I knowledge that my consulation is with an AI and not a licensed medical profeccional.',
-                style: context.themeText.bodyMedium,
+                style: context.extentions.themeText.bodyMedium,
               ),
             ),
           ],

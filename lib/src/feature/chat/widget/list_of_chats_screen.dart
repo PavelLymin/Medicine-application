@@ -101,14 +101,14 @@ class ChatTile extends StatelessWidget {
               children: [
                 Text(
                   chat.interlocutor.displayName ?? '',
-                  style: context.themeText.titleMedium,
+                  style: context.extentions.themeText.titleMedium,
                 ),
                 BlocBuilder<PresenceBloc, PresenceState>(
                   builder: (context, state) {
                     return state.maybeMap(
                       orElse: () => Text(
                         chat.lastMessage.content,
-                        style: context.themeText.bodyMedium,
+                        style: context.extentions.themeText.bodyMedium,
                       ),
                       startTyping: (state) {
                         if (state.chatId == chat.id) {

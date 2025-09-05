@@ -32,7 +32,7 @@ class ProfileTile extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: ListTile(
-              title: Text(title, style: context.themeText.bodyLarge),
+              title: Text(title, style: context.extentions.themeText.bodyLarge),
               subtitle: subtitle == null ? null : Text(subtitle!),
             ),
           ),

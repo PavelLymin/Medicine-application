@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/src/common/extensions/build_context.dart';
 import 'package:medicine_application/ui/ui.dart';
+import '../../authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'personal_information.dart';
 import 'profile_tile.dart';
 
@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 16),
                       Text(
                         'Medical Hostory',
-                        style: context.themeText.titleMedium,
+                        style: context.extentions.themeText.titleMedium,
                       ),
                       const SizedBox(height: 16),
                       ProfileTile(
@@ -61,7 +61,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         subtitle: 'None',
                       ),
                       const SizedBox(height: 16),
-                      Text('Settings', style: context.themeText.titleMedium),
+                      Text(
+                        'Settings',
+                        style: context.extentions.themeText.titleMedium,
+                      ),
                       const SizedBox(height: 16),
                       ProfileTile(
                         onTap: () {},
@@ -91,9 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           child: Text(
                             'Log Out',
-                            style: context.themeText.titleMedium?.copyWith(
-                              color: AppColors.red[400],
-                            ),
+                            style: context.extentions.themeText.titleMedium
+                                ?.copyWith(color: AppColors.red[400]),
                           ),
                         ),
                       ),

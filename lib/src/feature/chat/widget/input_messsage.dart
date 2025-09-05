@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/chat/state_management/message_bloc/message_bloc.dart';
+import 'package:medicine_application/src/common/extensions/build_context.dart';
 import 'package:medicine_application/ui/src/theme/theme.dart';
 import 'package:medicine_application/src/feature/chat/model/chat_entity.dart';
 import 'package:medicine_application/src/feature/chat/model/message_entity.dart';
+import '../state_management/message_bloc/message_bloc.dart';
 
 class InputMesssage extends StatelessWidget {
   const InputMesssage({
@@ -19,54 +20,57 @@ class InputMesssage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: const Icon(
-              Icons.attach_file,
-              color: AppColors.green,
-              size: 36,
-            ),
-            onPressed: () {},
-          ),
-          Expanded(
-            child: TextField(
-              controller: messageController,
-              focusNode: messageFocusNode,
-              maxLines: null,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32),
-                  borderSide: const BorderSide(color: AppColors.grey),
+    return ColoredBox(
+      color: AppColors.lightgrey,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.attach_file,
+                  color: AppColors.green,
+                  size: 36,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32),
-                  borderSide: const BorderSide(color: AppColors.darkGrey),
+                onPressed: () {},
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: TextField(
+                    style: TextStyle(color: AppColors.darkGrey),
+                    controller: messageController,
+                    focusNode: messageFocusNode,
+                    maxLines: null,
+                    decoration: context
+                        .extentions
+                        .themeDecorationInput
+                        .chatInputDecoration,
+                  ),
                 ),
               ),
-            ),
+              IconButton(
+                icon: const Icon(Icons.send, color: AppColors.green, size: 36),
+                onPressed: () {
+                  if (messageController.text.isEmpty) return;
+                  final message = CreatedMessageEntity(
+                    chatId: chat.id,
+                    senderId: chat.interlocutor.uid,
+                    content: messageController.text,
+                    createdAt: DateTime.now(),
+                  );
+                  context.read<MessageBloc>().add(
+                    MessageEvent.send(message: message),
+                  );
+                  messageController.clear();
+                },
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.send, color: AppColors.green, size: 36),
-            onPressed: () {
-              if (messageController.text.isEmpty) return;
-              final message = CreatedMessageEntity(
-                chatId: chat.id,
-                senderId: chat.interlocutor.uid,
-                content: messageController.text,
-                createdAt: DateTime.now(),
-              );
-              context.read<MessageBloc>().add(
-                MessageEvent.send(message: message),
-              );
-              messageController.clear();
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

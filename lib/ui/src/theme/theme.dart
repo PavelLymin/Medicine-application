@@ -4,11 +4,13 @@ part 'contsants.dart';
 part 'dark_theme.dart';
 part 'light_theme.dart';
 part 'text_theme.dart';
-part 'theme_colors.dart';
+part 'theme_extension.dart';
 
-InputDecorationTheme createInputTheme() => InputDecorationTheme(
+InputDecorationTheme createInputTheme(Color fillColor) => InputDecorationTheme(
+  filled: true,
+  fillColor: fillColor,
+  contentPadding: const EdgeInsets.only(left: 16),
   labelStyle: bodyLarge,
-  hintStyle: bodyLarge,
   enabledBorder: OutlineInputBorder(
     borderSide: const BorderSide(color: AppColors.green),
     borderRadius: BorderRadius.circular(8),

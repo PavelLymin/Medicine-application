@@ -82,3 +82,53 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
     buttonSocialColor: AppColors.white,
   );
 }
+
+class ThemeDecorationInput extends ThemeExtension<ThemeDecorationInput> {
+  const ThemeDecorationInput({required this.chatInputDecoration});
+
+  final InputDecoration chatInputDecoration;
+
+  @override
+  ThemeExtension<ThemeDecorationInput> copyWith({
+    InputDecoration? chatInputDecoration,
+  }) => ThemeDecorationInput(
+    chatInputDecoration: chatInputDecoration ?? this.chatInputDecoration,
+  );
+
+  @override
+  ThemeExtension<ThemeDecorationInput> lerp(
+    covariant ThemeExtension<ThemeDecorationInput>? other,
+    double t,
+  ) {
+    if (other is! ThemeDecorationInput) return this;
+    return ThemeDecorationInput(chatInputDecoration: InputDecoration());
+  }
+
+  static ThemeDecorationInput get light => ThemeDecorationInput(
+    chatInputDecoration: InputDecoration(
+      hintText: 'Enter your message',
+      hintStyle: TextStyle(color: AppColors.grey),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(32),
+        borderSide: const BorderSide(color: AppColors.lightgrey),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(32),
+        borderSide: const BorderSide(color: AppColors.lightgrey),
+      ),
+    ),
+  );
+
+  static ThemeDecorationInput get dark => ThemeDecorationInput(
+    chatInputDecoration: InputDecoration(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(32),
+        borderSide: const BorderSide(color: AppColors.lightgrey),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(32),
+        borderSide: const BorderSide(color: AppColors.lightgrey),
+      ),
+    ),
+  );
+}

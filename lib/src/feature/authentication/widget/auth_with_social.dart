@@ -33,7 +33,7 @@ class AuthWithSocial extends StatelessWidget {
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll<Color>(
-                    context.color.buttonSocialColor,
+                    context.extentions.themeColors.buttonSocialColor,
                   ),
                   backgroundBuilder: (context, state, child) => Container(
                     padding: const EdgeInsets.symmetric(vertical: 5),
@@ -61,7 +61,7 @@ class AuthWithSocial extends StatelessWidget {
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll<Color>(
-                    context.color.buttonSocialColor,
+                    context.extentions.themeColors.buttonSocialColor,
                   ),
                   backgroundBuilder: (context, state, child) => Container(
                     padding: const EdgeInsets.symmetric(vertical: 5),

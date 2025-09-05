@@ -42,7 +42,7 @@ ThemeData createLightTheme() {
         foregroundColor: WidgetStatePropertyAll<Color>(AppColors.white),
       ),
     ),
-    inputDecorationTheme: createInputTheme(),
-    extensions: [ThemeColors.light],
+    inputDecorationTheme: createInputTheme(AppColors.white),
+    extensions: [ThemeColors.light, ThemeDecorationInput.light],
   );
 }

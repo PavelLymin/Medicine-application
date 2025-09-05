@@ -32,7 +32,10 @@ class _SignInFormState extends State<SignInForm> {
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       const SizedBox(height: 16),
-      Text('Start using My App today', style: context.themeText.titleLarge!),
+      Text(
+        'Start using My App today',
+        style: context.extentions.themeText.titleLarge!,
+      ),
       Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -79,7 +82,7 @@ class _SignInFormState extends State<SignInForm> {
             onTap: () {},
             child: Text(
               'Forgot Password?',
-              style: context.themeText.bodyMedium!.copyWith(
+              style: context.extentions.themeText.bodyMedium!.copyWith(
                 color: AppColors.green,
               ),
             ),

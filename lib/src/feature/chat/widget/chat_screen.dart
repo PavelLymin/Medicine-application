@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../common/scopes/dependencies_scope.dart';
 import '../../../../ui/ui.dart';
 import '../model/chat_entity.dart';
 import '../state_management/message_bloc/message_bloc.dart';
 import '../state_management/presence_bloc/presence_bloc.dart';
+import 'button_down.dart';
 import 'input_messsage.dart';
 import 'typing.dart';
 
@@ -20,6 +22,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final _messageFocusNode = FocusNode();
+  final _scrollController = ScrollController();
   late FullChatEntity _chat;
   late MessageBloc _messageBloc;
   late PresenceBloc _presenceBloc;
@@ -55,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     _messageFocusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -83,25 +87,38 @@ class _ChatScreenState extends State<ChatScreen> {
               body: Column(
                 children: [
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
-                      ),
-                      child: ListView.builder(
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) =>
-                            SentMessage(message: state.messages[index].content),
-                      ),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
+                            dragStartBehavior: DragStartBehavior.down,
+                            controller: _scrollController,
+                            itemCount: state.messages.length,
+                            itemBuilder: (context, index) => SentMessage(
+                              message: state.messages[index].content,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Typing(chatId: _chat.id),
+                        ),
+                        Align(
+                          alignment: AlignmentGeometry.bottomRight,
+                          child: ButtonDown(
+                            scrollController: _scrollController,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Typing(chatId: _chat.id),
-                  SafeArea(
-                    child: InputMesssage(
-                      messageController: _messageController,
-                      messageFocusNode: _messageFocusNode,
-                      chat: _chat,
-                    ),
+                  InputMesssage(
+                    messageController: _messageController,
+                    messageFocusNode: _messageFocusNode,
+                    chat: _chat,
                   ),
                 ],
               ),

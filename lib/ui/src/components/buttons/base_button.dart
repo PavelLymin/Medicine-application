@@ -17,17 +17,21 @@ class BaseButton extends StatelessWidget {
     onPressed: !isEnable ? null : onPressed,
     style: ButtonStyle(
       foregroundColor: !isEnable
-          ? WidgetStatePropertyAll<Color>(context.color.disableTextColor)
+          ? WidgetStatePropertyAll<Color>(
+              context.extentions.themeColors.disableTextColor,
+            )
           : null,
       textStyle: WidgetStatePropertyAll<TextStyle>(
-        context.themeText.bodyMedium!.copyWith(
+        context.extentions.themeText.bodyMedium!.copyWith(
           color: AppColors.darkGrey,
           fontWeight: FontWeight.w600,
         ),
       ),
       fixedSize: WidgetStatePropertyAll<Size>(Size(double.maxFinite, 60)),
       backgroundColor: !isEnable
-          ? WidgetStatePropertyAll<Color>(context.color.disableButtonColor)
+          ? WidgetStatePropertyAll<Color>(
+              context.extentions.themeColors.disableButtonColor,
+            )
           : null,
     ),
     child: widget,

@@ -47,14 +47,14 @@ sealed class MessageState {
     error: error ?? (_) => orElse(),
   );
 
-  R? mapOrNull<R>(
+  R? mapOrNull<R>({
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoading>? loading,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageLoaded>? loaded,
     // ignore: library_private_types_in_public_api
     MatchingState<R, _MessageError>? error,
-  ) => map<R?>(
+  }) => map<R?>(
     loading: loading ?? (_) => null,
     loaded: loaded ?? (_) => null,
     error: error ?? (_) => null,

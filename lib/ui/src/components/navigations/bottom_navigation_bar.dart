@@ -106,7 +106,7 @@ class TabItem extends StatelessWidget {
           ),
           Text(
             title,
-            style: context.themeText.bodySmall?.copyWith(
+            style: context.extentions.themeText.bodySmall?.copyWith(
               color: isActive ? AppColors.green : Colors.grey[600],
             ),
           ),
