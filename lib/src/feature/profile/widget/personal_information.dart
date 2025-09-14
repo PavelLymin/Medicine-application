@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/common/extensions/build_context.dart';
+import 'package:ui/ui.dart';
 import '../../../../ui/ui.dart';
+import '../../../common/extensions/build_context.dart';
 import '../../authentication/model/user_entity.dart';
 import '../../authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'profile_tile.dart';
@@ -51,7 +52,10 @@ class _TilesPersonalInformation extends StatelessWidget {
         ],
       ),
       const SizedBox(height: 24),
-      Text(user.displayName!, style: context.extentions.themeText.titleLarge),
+      Text(
+        user.displayName ?? '',
+        style: context.extentions.themeText.titleLarge,
+      ),
       const SizedBox(height: 32),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,

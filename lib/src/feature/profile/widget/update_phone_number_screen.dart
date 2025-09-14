@@ -1,8 +1,8 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/src/common/constant/config.dart';
+import 'package:ui/ui.dart';
 import '../../../../ui/ui.dart';
+import '../state_management/bloc/verification_phone_bloc.dart';
 
 class UpdatePhoneNumberScreen extends StatefulWidget {
   const UpdatePhoneNumberScreen({super.key});
@@ -13,18 +13,13 @@ class UpdatePhoneNumberScreen extends StatefulWidget {
 }
 
 class _UpdatePhoneNumberScreenState extends State<UpdatePhoneNumberScreen>
-    with _PhoneNumberFormStateMixin<UpdatePhoneNumberScreen> {
+    with _PhoneNumberFormStateMixin {
   final _phoneNumberController = TextEditingController();
-  bool _isValidate = false;
 
   @override
   void initState() {
     super.initState();
-    _phoneNumberController.addListener(() {
-      setState(() {
-        _isValidate = validate(_phoneNumberController.text);
-      });
-    });
+    validate(_phoneNumberController);
   }
 
   @override
@@ -34,52 +29,45 @@ class _UpdatePhoneNumberScreenState extends State<UpdatePhoneNumberScreen>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-          state.mapOrNull(
-            smsCodeSent: (state) =>
-                context.router.replace(NamedRoute('SmsCodeScreen')),
-          );
-        },
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 64),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  BaseScroller(),
-                  const SizedBox(height: 64),
-                  TextPlaceholder(
-                    controller: _phoneNumberController,
-                    autofillHints: [AutofillHints.telephoneNumber],
-                    labelText: 'Phone Number',
-                    hintText: 'Enter your phone number',
-                    icon: Icons.numbers,
-                  ),
-                  const SizedBox(height: 8),
-                  BaseButton(
-                    onPressed: () {
-                      context.read<AuthenticationBloc>().add(
-                        AuthenticationEvent.verifyPhoneNumber(
-                          phoneNumber: _phoneNumberController.text,
-                        ),
-                      );
-                    },
-                    isEnable: _isValidate,
-                    widget: const Text('Continue'),
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
+  Widget build(BuildContext context) => SafeArea(
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 64),
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          const BaseScroller(),
+          const SizedBox(height: 64),
+          TextPlaceholder(
+            controller: _phoneNumberController,
+            autofillHints: [AutofillHints.telephoneNumber],
+            labelText: 'Phone Number',
+            hintText: 'Enter your phone number',
+            icon: Icons.numbers,
           ),
-        ),
-      );
+          const SizedBox(height: 8),
+          BaseButton(
+            onPressed: () {
+              context.read<VerificationPhoneBloc>().add(
+                VerificationPhoneEvent.verifyPhoneNumber(
+                  phoneNumber: _phoneNumberController.text,
+                ),
+              );
+            },
+            isEnable: _isValidate,
+            widget: const Text('Continue'),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    ),
+  );
 }
 
-mixin _PhoneNumberFormStateMixin<T extends StatefulWidget> on State<T> {
+mixin _PhoneNumberFormStateMixin on State<UpdatePhoneNumberScreen> {
+  String? _phoneNumberError;
+
+  bool _isValidate = false;
+
   String? _validatePhoneNumber(String phoneNumber) {
     RegExp regExp = Config.phoneNumberValidate;
     if (phoneNumber.isEmpty) {
@@ -87,13 +75,18 @@ mixin _PhoneNumberFormStateMixin<T extends StatefulWidget> on State<T> {
     } else if (!regExp.hasMatch(phoneNumber)) {
       return 'Please enter valid mobile number';
     }
+
     return null;
   }
 
-  String? _phoneNumberError;
+  bool validate(TextEditingController controller) {
+    controller.addListener(() {
+      setState(() {
+        _phoneNumberError = _validatePhoneNumber(controller.text);
+        _isValidate = _phoneNumberError == null;
+      });
+    });
 
-  bool validate(String phoneNumber) {
-    _phoneNumberError = _validatePhoneNumber(phoneNumber);
-    return _phoneNumberError == null;
+    return _isValidate;
   }
 }

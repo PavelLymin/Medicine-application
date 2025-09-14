@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/src/common/constant/config.dart';
-import 'package:medicine_application/src/feature/authentication/widget/auth_agreement.dart';
-import 'package:medicine_application/src/feature/authentication/widget/auth_with_social.dart';
-import 'package:medicine_application/src/feature/authentication/widget/signin_form.dart';
-import '../../../../ui/ui.dart';
+import 'package:ui/ui.dart';
+import '../../../common/constant/config.dart';
+import '../state_manegament/auth_bloc/auth_bloc.dart';
+import 'auth_agreement.dart';
+import 'auth_with_social.dart';
+import 'signin_form.dart';
 
 @RoutePage()
 class SignIn extends StatefulWidget {
@@ -52,8 +52,7 @@ class _SignInState extends State<SignIn>
     body: BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         state.mapOrNull(
-          authenticated: (_) =>
-              context.router.replace(NamedRoute('HomeScreen')),
+          authenticated: (_) => context.router.replace(NamedRoute('Home')),
           error: (error) => ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(error.message))),

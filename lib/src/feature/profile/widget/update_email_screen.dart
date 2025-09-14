@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'package:medicine_application/src/common/constant/config.dart';
+import 'package:ui/ui.dart';
 import '../../../../ui/ui.dart';
 
 class UpdateEmailScreen extends StatefulWidget {

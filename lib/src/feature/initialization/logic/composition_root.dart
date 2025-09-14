@@ -14,6 +14,7 @@ import '../../chat/data/repository/real_time_repository.dart';
 import '../../chat/state_management/chat_bloc/chat_bloc.dart';
 import '../../chat/state_management/message_bloc/message_bloc.dart';
 import '../../chat/state_management/presence_bloc/presence_bloc.dart';
+import '../../profile/state_management/bloc/verification_phone_bloc.dart';
 import '../dependency/dependency_container.dart';
 
 class CompositionRoot {
@@ -26,6 +27,7 @@ class CompositionRoot {
 
     // Firebase
     final firebaseAuth = await _CreateFirebaseAuth().create();
+    FirebaseAuth.instance.setLanguageCode('ru');
 
     // WebSockets
     final realTimeRepository = RealTimeRepository();
@@ -39,6 +41,12 @@ class CompositionRoot {
       repository: authRepository,
       firebaseAuth: firebaseAuth,
       realTimeRepository: realTimeRepository,
+    );
+
+    // Verification phone
+    final verificationPhoneBloc = VerificationPhoneBloc(
+      firebaseAuth: firebaseAuth,
+      repository: authRepository,
     );
 
     // Client Api
@@ -73,8 +81,10 @@ class CompositionRoot {
     return _DependencyFactory(
       logger: logger,
       authenticationBloc: authenticationBloc,
+      verificationPhoneBloc: verificationPhoneBloc,
       realTimeRepository: realTimeRepository,
       chatBloc: chatBloc,
+      chatRepository: chatRepository,
       messageBloc: messageBloc,
       presenceBloc: presenceBloc,
     ).create();
@@ -97,8 +107,10 @@ class _DependencyFactory implements Factory<DependencyContainer> {
   const _DependencyFactory({
     required this.logger,
     required this.authenticationBloc,
+    required this.verificationPhoneBloc,
     required this.realTimeRepository,
     required this.chatBloc,
+    required this.chatRepository,
     required this.messageBloc,
     required this.presenceBloc,
   });
@@ -107,9 +119,13 @@ class _DependencyFactory implements Factory<DependencyContainer> {
 
   final AuthenticationBloc authenticationBloc;
 
+  final VerificationPhoneBloc verificationPhoneBloc;
+
   final IRealTimeRepository realTimeRepository;
 
   final ChatBloc chatBloc;
+
+  final IChatRepository chatRepository;
 
   final MessageBloc messageBloc;
 
@@ -119,8 +135,10 @@ class _DependencyFactory implements Factory<DependencyContainer> {
   DependencyContainer create() => DependencyContainer(
     logger: logger,
     authenticationBloc: authenticationBloc,
+    verificationPhoneBloc: verificationPhoneBloc,
     realTimeRepository: realTimeRepository,
     chatBloc: chatBloc,
+    chatRepository: chatRepository,
     messageBloc: messageBloc,
     presenceBloc: presenceBloc,
   );

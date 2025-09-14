@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_application/src/common/extensions/build_context.dart';
-import 'package:medicine_application/ui/src/theme/theme.dart';
+import 'package:ui/src/theme/theme.dart';
 import 'package:medicine_application/src/feature/chat/model/chat_entity.dart';
 import 'package:medicine_application/src/feature/chat/model/message_entity.dart';
 import '../state_management/message_bloc/message_bloc.dart';

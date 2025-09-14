@@ -241,6 +241,7 @@
 				3399D490228B24CF009A79C7 /* ShellScript */,
 				D53C50B42D8523DDD9A1AC4F /* [CP] Embed Pods Frameworks */,
 				69662A2EC94DD99A538D2482 /* [CP] Copy Pods Resources */,
+				C0DDF0842E6D504B005B0E8D /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -377,6 +378,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		C0DDF0842E6D504B005B0E8D /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
 		};
 		C9478B257C31336F70E15BFE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

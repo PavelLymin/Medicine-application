@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 import '../../../common/scopes/dependencies_scope.dart';
-import '../../../../ui/ui.dart';
 import '../model/chat_entity.dart';
 import '../state_management/message_bloc/message_bloc.dart';
 import '../state_management/presence_bloc/presence_bloc.dart';
@@ -69,22 +69,17 @@ class _ChatScreenState extends State<ChatScreen> {
         BlocProvider.value(value: _messageBloc),
         BlocProvider.value(value: _presenceBloc),
       ],
-      child: BlocBuilder<MessageBloc, MessageState>(
-        builder: (context, state) {
-          return state.maybeMap(
-            orElse: () => Scaffold(
-              appBar: AppBar(
-                leading: BackButton(onPressed: () => context.router.pop()),
-              ),
-              body: const Center(child: CircularProgressIndicator()),
-            ),
-            loaded: (state) => Scaffold(
-              appBar: AppBar(
-                title: Text(_chat.interlocutor.displayName ?? ''),
-                centerTitle: false,
-                leading: BackButton(onPressed: () => context.router.pop()),
-              ),
-              body: Column(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_chat.interlocutor.displayName ?? ''),
+          centerTitle: false,
+          leading: BackButton(onPressed: () => context.router.pop()),
+        ),
+        body: BlocBuilder<MessageBloc, MessageState>(
+          builder: (context, state) {
+            return state.maybeMap(
+              orElse: () => const SizedBox.shrink(),
+              loaded: (state) => Column(
                 children: [
                   Expanded(
                     child: Stack(
@@ -92,7 +87,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: ListView.builder(
-                            shrinkWrap: true,
                             reverse: true,
                             dragStartBehavior: DragStartBehavior.down,
                             controller: _scrollController,
@@ -122,17 +116,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ],
               ),
-            ),
-            error: (state) => Scaffold(
-              appBar: AppBar(
-                title: Text(_chat.interlocutor.displayName ?? ''),
-                centerTitle: false,
-                leading: BackButton(onPressed: () => context.router.pop()),
-              ),
-              body: Center(child: Text(state.error)),
-            ),
-          );
-        },
+              error: (state) => Center(child: Text(state.error)),
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,4 +1,4 @@
-import '../../../ui/ui.dart';
+import 'package:ui/ui.dart';
 
 extension BuildContextExt on BuildContext {
   BuildContextExtention get extentions => BuildContextExtention(

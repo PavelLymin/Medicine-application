@@ -8,7 +8,7 @@ import 'package:medicine_application/src/feature/profile/widget/profile_sreen.da
 import 'package:medicine_application/src/feature/profile/widget/update_phone_number_screen.dart';
 import '../../feature/chat/widget/chat_screen.dart';
 import '../../feature/profile/widget/sms_code_screen.dart';
-import '../../../ui/src/components/navigations/bottom_navigation_bar.dart';
+import '../../../ui/src/components/navigations/navigation_bar.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
@@ -28,6 +28,7 @@ class AppRouter extends RootStackRouter {
       builder: (context, _) => const UpdatePhoneNumberScreen(),
     ),
     NamedRouteDef(
+      initial: true,
       name: 'SmsCodeScreen',
       builder: (context, _) => const SmsCodeScreen(),
     ),
@@ -44,19 +45,19 @@ class AppRouter extends RootStackRouter {
       children: [
         NamedRouteDef(
           initial: true,
-          name: 'HomeScreen',
+          name: 'Home',
           builder: (context, _) => const HomeScreen(),
         ),
         NamedRouteDef(
-          name: 'ProfileScreen',
+          name: 'Profile',
           builder: (context, _) => const ProfileScreen(),
         ),
         NamedRouteDef(
-          name: 'ChatScreen',
+          name: 'Chat',
           builder: (context, _) => const ListOfChatsScreen(),
         ),
         NamedRouteDef(
-          name: 'ConsultationsScreen',
+          name: 'Consultations',
           builder: (context, data) => const ConsultationsScreen(),
         ),
       ],

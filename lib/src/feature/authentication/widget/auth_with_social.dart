@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
-import 'package:medicine_application/src/common/extensions/build_context.dart';
-import '../../../../ui/ui.dart';
+import 'package:ui/ui.dart';
+import '../../../common/extensions/build_context.dart';
+import '../state_manegament/auth_bloc/auth_bloc.dart';
 
 class AuthWithSocial extends StatelessWidget {
   const AuthWithSocial({super.key});

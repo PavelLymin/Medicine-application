@@ -1,5 +1,5 @@
-import 'package:medicine_application/src/common/extensions/build_context.dart';
-import 'package:medicine_application/ui/ui.dart';
+import 'package:ui/ui.dart';
+import '../../../common/extensions/build_context.dart';
 
 class ProfileTile extends StatelessWidget {
   const ProfileTile({

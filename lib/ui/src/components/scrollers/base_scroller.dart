@@ -1,4 +1,4 @@
-import 'package:medicine_application/ui/ui.dart';
+import 'package:ui/ui.dart';
 
 class BaseScroller extends StatelessWidget {
   const BaseScroller({super.key});

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ui/ui.dart';
 import 'src/common/bloc/app_bloc_observer.dart';
 import 'src/common/router/auto_route.dart';
 import 'src/common/scopes/dependencies_scope.dart';
 import 'src/feature/authentication/state_manegament/auth_bloc/auth_bloc.dart';
 import 'src/feature/initialization/logic/composition_root.dart';
-import 'ui/ui.dart';
 
 @pragma('vm:entry-point')
 void main([List<String>? args]) async {
@@ -53,7 +53,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [BlocProvider(create: (context) => _authenticationBloc)],
+    providers: [
+      BlocProvider(create: (context) => _authenticationBloc),
+      BlocProvider(
+        create: (context) => DependeciesScope.of(context).verificationPhoneBloc,
+      ),
+    ],
     child: MaterialApp.router(
       routerConfig: appRouter.config(),
       title: 'Medical App',
