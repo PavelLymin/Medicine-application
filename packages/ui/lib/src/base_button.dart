@@ -17,15 +17,10 @@ class BaseButton extends StatelessWidget {
     style: ButtonStyle(
       foregroundColor: !isEnable
           ? WidgetStatePropertyAll<Color>(
-              Theme.of(context).extension<ThemeColors>()!.disableButtonColor,
+              Theme.of(context).extension<ThemeColors>()!.disableTextColor,
             )
           : null,
-      textStyle: WidgetStatePropertyAll<TextStyle>(
-        Theme.of(context).textTheme.bodyMedium!.copyWith(
-          color: AppColors.darkGrey,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+
       fixedSize: WidgetStatePropertyAll<Size>(Size(double.maxFinite, 60)),
       backgroundColor: !isEnable
           ? WidgetStatePropertyAll<Color>(

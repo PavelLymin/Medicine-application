@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../authentication/data/repository/auth_repository.dart';
-
 part 'verification_phone_event.dart';
 part 'verification_phone_state.dart';
 
@@ -13,7 +12,7 @@ class VerificationPhoneBloc
     required IAuthRepository repository,
   }) : _firebaseAuth = firebaseAuth,
        _repository = repository,
-       super(VerificationPhoneState.initial()) {
+       super(VerificationPhoneState.loading()) {
     on<VerificationPhoneEvent>((event, emit) async {
       await event.map(
         verifyPhoneNumber: (e) => _verifyPhoneNumber(e, emit),
@@ -33,8 +32,10 @@ class VerificationPhoneBloc
         Completer<VerificationPhoneState>();
     await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: s.phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async =>
-          await _firebaseAuth.currentUser?.updatePhoneNumber(credential),
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await _firebaseAuth.currentUser?.updatePhoneNumber(credential);
+        completer.complete(VerificationPhoneState.success());
+      },
       verificationFailed: (error) => completer.complete(
         VerificationPhoneState.error(
           message: error.code == 'invalid-phone-number'
@@ -59,7 +60,11 @@ class VerificationPhoneBloc
   ) async {
     try {
       emit(VerificationPhoneState.loading());
-      await _repository.updatePhoneNumber(phoneCredential: s.phoneCredential);
+      await _repository.updatePhoneNumber(
+        verificationId: s.verificationId,
+        smsCode: s.smsCode,
+      );
+      emit(VerificationPhoneState.success());
     } catch (e) {
       emit(VerificationPhoneState.error(message: e.toString()));
     }

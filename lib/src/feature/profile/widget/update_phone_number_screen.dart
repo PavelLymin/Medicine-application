@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medicine_application/src/common/constant/config.dart';
 import 'package:ui/ui.dart';
 import '../../../../ui/ui.dart';
+import '../../../common/constant/config.dart';
 import '../state_management/bloc/verification_phone_bloc.dart';
 
 class UpdatePhoneNumberScreen extends StatefulWidget {
@@ -29,38 +30,47 @@ class _UpdatePhoneNumberScreenState extends State<UpdatePhoneNumberScreen>
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 64),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          const BaseScroller(),
-          const SizedBox(height: 64),
-          TextPlaceholder(
-            controller: _phoneNumberController,
-            autofillHints: [AutofillHints.telephoneNumber],
-            labelText: 'Phone Number',
-            hintText: 'Enter your phone number',
-            icon: Icons.numbers,
-          ),
-          const SizedBox(height: 8),
-          BaseButton(
-            onPressed: () {
-              context.read<VerificationPhoneBloc>().add(
-                VerificationPhoneEvent.verifyPhoneNumber(
-                  phoneNumber: _phoneNumberController.text,
+  Widget build(BuildContext context) =>
+      BlocListener<VerificationPhoneBloc, VerificationPhoneState>(
+        listener: (context, state) {
+          state.mapOrNull(
+            smsCodeSent: (state) =>
+                context.router.replace(NamedRoute("SmsCodeScreen")),
+          );
+        },
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 64),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                const BaseScroller(),
+                const SizedBox(height: 64),
+                TextPlaceholder(
+                  controller: _phoneNumberController,
+                  autofillHints: [AutofillHints.telephoneNumber],
+                  labelText: 'Phone Number',
+                  hintText: 'Enter your phone number',
+                  icon: Icons.numbers,
                 ),
-              );
-            },
-            isEnable: _isValidate,
-            widget: const Text('Continue'),
+                const SizedBox(height: 8),
+                BaseButton(
+                  onPressed: () {
+                    context.read<VerificationPhoneBloc>().add(
+                      VerificationPhoneEvent.verifyPhoneNumber(
+                        phoneNumber: _phoneNumberController.text,
+                      ),
+                    );
+                  },
+                  isEnable: _isValidate,
+                  widget: const Text('Continue'),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
-          const SizedBox(height: 32),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 mixin _PhoneNumberFormStateMixin on State<UpdatePhoneNumberScreen> {

@@ -39,8 +39,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
         signInWithEmailAndPassword: (s) => _signIn(s, emit),
         signUp: (s) => _signUp(s, emit),
         signInWithGoogle: (_) => _signInWithGoogle(emit),
-        verifyPhoneNumber: (s) async => await _verifyPhoneNumber(s, emit),
-        updatePhoneNumber: (s) async => await _updatePhoneNumber(s, emit),
         updateEmail: (s) => _updateEmail(s, emit),
         signOut: (_) => _signOut(emit),
       );
@@ -95,53 +93,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
     try {
       emit(AuthenticationState.loading(user: state.currentUser));
       await _repository.signInWithGoogle();
-    } catch (e) {
-      emit(
-        AuthenticationState.error(
-          user: state.currentUser,
-          message: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _verifyPhoneNumber(
-    _VerifyPhoneNumber s,
-    Emitter<AuthenticationState> emit,
-  ) async {
-    Completer<AuthenticationState> completer = Completer<AuthenticationState>();
-    await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: s.phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async =>
-          await _firebaseAuth.currentUser?.updatePhoneNumber(credential),
-      verificationFailed: (error) => completer.complete(
-        AuthenticationState.error(
-          user: state.currentUser,
-          message: error.code == 'invalid-phone-number'
-              ? "Invalid number. Enter again."
-              : "Can Not Login Now. Please try again.",
-        ),
-      ),
-      codeSent: (String verificationId, int? resendToken) async =>
-          completer.complete(
-            AuthenticationState.smsCodeSent(
-              user: state.currentUser,
-              verificationId: verificationId,
-            ),
-          ),
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-    final result = await completer.future;
-    emit(result);
-  }
-
-  Future<void> _updatePhoneNumber(
-    _UpdatePhoneNumber s,
-    Emitter<AuthenticationState> emit,
-  ) async {
-    try {
-      emit(AuthenticationState.loading(user: state.currentUser));
-      await _repository.updatePhoneNumber(phoneCredential: s.phoneCredential);
     } catch (e) {
       emit(
         AuthenticationState.error(

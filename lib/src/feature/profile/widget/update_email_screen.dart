@@ -33,47 +33,39 @@ class _UpdateEmailScreenState extends State<UpdateEmailScreen>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-          state.mapOrNull();
-        },
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 64),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  const BaseScroller(),
-                  const SizedBox(height: 64),
-                  TextPlaceholder(
-                    controller: _emailController,
-                    onChanged: (text) {},
-                    autofillHints: [AutofillHints.email],
-                    labelText: 'Email',
-                    hintText: 'Enter your email',
-                    icon: Icons.numbers,
-                  ),
-                  const SizedBox(height: 8),
-                  BaseButton(
-                    onPressed: () {
-                      context.read<AuthenticationBloc>().add(
-                        AuthenticationEvent.updateEmail(
-                          email: _emailController.text,
-                        ),
-                      );
-                    },
-                    isEnable: _isValidate,
-                    widget: const Text('Continue'),
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
+  Widget build(BuildContext context) => SafeArea(
+    child: LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 64),
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            const BaseScroller(),
+            const SizedBox(height: 64),
+            TextPlaceholder(
+              controller: _emailController,
+              onChanged: (text) {},
+              autofillHints: [AutofillHints.email],
+              labelText: 'Email',
+              hintText: 'Enter your email',
+              icon: Icons.numbers,
             ),
-          ),
+            const SizedBox(height: 8),
+            BaseButton(
+              onPressed: () {
+                context.read<AuthenticationBloc>().add(
+                  AuthenticationEvent.updateEmail(email: _emailController.text),
+                );
+              },
+              isEnable: _isValidate,
+              widget: const Text('Continue'),
+            ),
+            const SizedBox(height: 32),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 mixin _EmailFormStateMixin<T extends StatefulWidget> on State<T> {

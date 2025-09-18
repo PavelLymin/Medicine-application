@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
-import 'package:medicine_application/ui/ui.dart';
 import 'package:ui/ui.dart';
 import '../../../../src/common/extensions/build_context.dart';
 
@@ -35,7 +34,9 @@ class RootScreen extends StatelessWidget {
                 ),
               )
             : null,
-        bottomNavigationBar: Platform.isIOS ? const BottomNavigation() : null,
+        bottomNavigationBar: Platform.isIOS || Platform.isAndroid
+            ? const BottomNavigation()
+            : null,
         body: Platform.isMacOS && MediaQuery.sizeOf(context).width >= 620
             ? Row(
                 children: [

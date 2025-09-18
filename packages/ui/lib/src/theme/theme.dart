@@ -10,7 +10,8 @@ part 'theme_extension.dart';
 InputDecorationTheme createInputTheme(Color fillColor) => InputDecorationTheme(
   filled: true,
   fillColor: fillColor,
-  labelStyle: bodyLarge,
+  labelStyle: GoogleFonts.oswald(textStyle: labelMedium),
+  hintStyle: GoogleFonts.oswald(textStyle: labelSmall),
   enabledBorder: OutlineInputBorder(
     borderSide: const BorderSide(color: AppColors.green),
     borderRadius: BorderRadius.circular(8),

@@ -1,19 +1,40 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class Pin extends StatefulWidget {
-  const Pin({super.key});
+class PinScope extends StatefulWidget {
+  const PinScope({super.key, required this.child});
+
+  final Widget child;
+
+  // ignore: library_private_types_in_public_api
+  static _PinInherited of(BuildContext context, {bool listen = false}) {
+    if (listen) {
+      return context.dependOnInheritedWidgetOfExactType<_PinInherited>()!;
+    } else {
+      return context.getInheritedWidgetOfExactType<_PinInherited>()!;
+    }
+  }
 
   @override
-  State<Pin> createState() => _PinState();
+  State<PinScope> createState() => _PinScopeState();
 }
 
-class _PinState extends State<Pin> with PinCodeLogic {
+class _PinScopeState extends State<PinScope> with PinCodeLogic {
   late List<TextEditingController> _controllers;
   late List<FocusNode> _focusNodes;
 
-  bool get isValidate => isAllFieldFill(_controllers);
+  Stream<bool> get isValidate => isAllFieldFill(_controllers);
   String get pinCode => getPinCode(_controllers);
+
+  void _onTextChanged(
+    List<TextEditingController> controllers,
+    List<FocusNode> focusNodes,
+    int index,
+  ) {
+    _listen(controllers, focusNodes, index);
+  }
 
   @override
   void initState() {
@@ -35,36 +56,91 @@ class _PinState extends State<Pin> with PinCodeLogic {
   }
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: List.generate(
-      6,
-      (index) => PinInput(
-        controller: _controllers[index],
-        focusNode: _focusNodes[index],
-        onChange: (value) {
-          _listen(_controllers, _focusNodes, index);
-          setState(() {});
-        },
-      ),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      _PinInherited(pin: this, child: widget.child);
 }
 
-class PinInput extends StatelessWidget {
+class _PinInherited extends InheritedWidget {
+  const _PinInherited({required this.pin, required super.child});
+
+  final _PinScopeState pin;
+
+  @override
+  bool updateShouldNotify(covariant _PinInherited oldWidget) =>
+      pin.isValidate != oldWidget.pin.isValidate ||
+      pin.pinCode != oldWidget.pin.pinCode;
+}
+
+class Pin extends StatefulWidget {
+  const Pin({super.key});
+
+  @override
+  State<Pin> createState() => _PinState();
+}
+
+class _PinState extends State<Pin> {
+  late _PinInherited state;
+
+  @override
+  void initState() {
+    state = PinScope.of(context);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: List.generate(
+        6,
+        (index) => PinInput(
+          index: index,
+          controller: state.pin._controllers[index],
+          focusNode: state.pin._focusNodes[index],
+          onChange: (value) {
+            state.pin._onTextChanged(
+              state.pin._controllers,
+              state.pin._focusNodes,
+              index,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class PinInput extends StatefulWidget {
   const PinInput({
     super.key,
+    required this.index,
     required this.controller,
     required this.focusNode,
     required this.onChange,
   });
 
+  final int index;
   final TextEditingController controller;
   final FocusNode focusNode;
   final Function(String) onChange;
 
-  bool get _hasText => controller.text.isNotEmpty;
+  @override
+  State<PinInput> createState() => _PinInputState();
+}
+
+class _PinInputState extends State<PinInput> {
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    widget.controller.addListener(() {
+      setState(() {
+        _hasText = widget.controller.text.isNotEmpty;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +148,20 @@ class PinInput extends StatelessWidget {
       height: _hasText ? 60 : 50,
       width: _hasText ? 50 : 40,
       child: TextField(
-        controller: controller,
-        focusNode: focusNode,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         maxLines: 1,
         maxLength: 1,
-        onChanged: onChange,
+        onChanged: widget.onChange,
         decoration: InputDecoration(
           counterText: '',
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: _hasText ? Colors.green : Colors.grey,
@@ -98,12 +178,45 @@ class PinInput extends StatelessWidget {
   }
 }
 
-mixin PinCodeLogic on State<Pin> {
-  bool isAllFieldFill(List<TextEditingController> controllers) {
-    for (var controller in controllers) {
-      if (controller.text.isEmpty) return false;
+mixin PinCodeLogic<T extends StatefulWidget> on State<T> {
+  void _checkAllFields(
+    List<TextEditingController> controllers,
+    StreamController streamController,
+  ) {
+    final allFilled = controllers.every((c) => c.text.isNotEmpty);
+    streamController.add(allFilled);
+  }
+
+  void _cleanup(
+    List<TextEditingController> controllers,
+    StreamController streamController,
+    bool isStreamClosed,
+  ) {
+    if (!isStreamClosed) {
+      isStreamClosed = true;
+      for (final controller in controllers) {
+        controller.removeListener(() {
+          _checkAllFields(controllers, streamController);
+        });
+      }
     }
-    return true;
+  }
+
+  Stream<bool> isAllFieldFill(List<TextEditingController> controllers) {
+    final streamController = StreamController<bool>.broadcast();
+    var isStreamClosed = false;
+    for (final controller in controllers) {
+      controller.addListener(() {
+        _checkAllFields(controllers, streamController);
+      });
+    }
+    _checkAllFields(controllers, streamController);
+    streamController.onCancel = () {
+      _cleanup(controllers, streamController, isStreamClosed);
+      streamController.close();
+    };
+
+    return streamController.stream;
   }
 
   String getPinCode(List<TextEditingController> controllers) =>
@@ -119,7 +232,6 @@ mixin PinCodeLogic on State<Pin> {
     }
   }
 
-  // Внутри mixin PinCodeLogic
   KeyEventResult _onKeyEvent(
     FocusNode node,
     KeyEvent event,
@@ -134,7 +246,6 @@ mixin PinCodeLogic on State<Pin> {
       if (controllers[index].text.isEmpty && index > 0) {
         focusNodes[index - 1].requestFocus();
         controllers[index - 1].clear();
-        setState(() {});
         return KeyEventResult.handled;
       }
     }

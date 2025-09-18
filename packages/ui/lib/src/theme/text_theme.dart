@@ -7,5 +7,8 @@ TextTheme createTextTheme() {
     bodyLarge: GoogleFonts.oswald(textStyle: bodyLarge),
     bodyMedium: GoogleFonts.oswald(textStyle: bodyMedium),
     bodySmall: GoogleFonts.lato(textStyle: bodySmall),
+    labelLarge: GoogleFonts.lato(textStyle: labelLarge),
+    labelMedium: GoogleFonts.lato(textStyle: labelMedium),
+    labelSmall: GoogleFonts.lato(textStyle: labelSmall),
   );
 }

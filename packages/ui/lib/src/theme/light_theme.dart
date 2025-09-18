@@ -7,7 +7,10 @@ ThemeData createLightTheme() {
     scaffoldBackgroundColor: AppColors.white,
     hintColor: AppColors.white,
     textTheme: createTextTheme(),
-    appBarTheme: AppBarTheme(backgroundColor: AppColors.white),
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.white,
+      titleTextStyle: GoogleFonts.oswald(textStyle: labelLarge),
+    ),
     primaryColor: AppColors.white,
     progressIndicatorTheme: ProgressIndicatorThemeData(color: AppColors.white),
     textSelectionTheme: TextSelectionThemeData(cursorColor: AppColors.darkGrey),
@@ -34,7 +37,10 @@ ThemeData createLightTheme() {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        elevation: WidgetStatePropertyAll(0),
+        textStyle: WidgetStatePropertyAll<TextStyle>(
+          GoogleFonts.oswald(textStyle: labelMedium),
+        ),
+        elevation: WidgetStatePropertyAll<double>(0),
         shadowColor: WidgetStatePropertyAll<Color>(AppColors.transparent),
         shape: WidgetStatePropertyAll<OutlinedBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

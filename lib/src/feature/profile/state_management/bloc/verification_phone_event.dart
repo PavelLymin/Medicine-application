@@ -11,7 +11,8 @@ sealed class VerificationPhoneEvent {
   }) = _VerifyPhoneNumber;
 
   const factory VerificationPhoneEvent.updatePhoneNumber({
-    required PhoneAuthCredential phoneCredential,
+    required String verificationId,
+    required String smsCode,
   }) = _UpdatePhoneNumber;
 
   FutureOr<R> map<R>({
@@ -33,6 +34,11 @@ final class _VerifyPhoneNumber extends VerificationPhoneEvent {
 }
 
 final class _UpdatePhoneNumber extends VerificationPhoneEvent {
-  const _UpdatePhoneNumber({required this.phoneCredential});
-  final PhoneAuthCredential phoneCredential;
+  const _UpdatePhoneNumber({
+    required this.verificationId,
+    required this.smsCode,
+  });
+
+  final String verificationId;
+  final String smsCode;
 }

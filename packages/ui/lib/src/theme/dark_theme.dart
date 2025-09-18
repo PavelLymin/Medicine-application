@@ -7,9 +7,11 @@ ThemeData createDarkTheme() {
     scaffoldBackgroundColor: AppColors.black,
     hintColor: AppColors.white,
     textTheme: createTextTheme(),
-    appBarTheme: AppBarTheme(backgroundColor: AppColors.black),
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.black,
+      titleTextStyle: GoogleFonts.oswald(textStyle: labelLarge),
+    ),
     progressIndicatorTheme: ProgressIndicatorThemeData(color: AppColors.white),
-
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStatePropertyAll(AppColors.black),
       trackColor: WidgetStatePropertyAll(AppColors.white),
@@ -33,6 +35,9 @@ ThemeData createDarkTheme() {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
+        textStyle: WidgetStatePropertyAll<TextStyle>(
+          GoogleFonts.oswald(textStyle: labelMedium),
+        ),
         shape: WidgetStatePropertyAll<OutlinedBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),

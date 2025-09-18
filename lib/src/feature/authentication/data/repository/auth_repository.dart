@@ -18,7 +18,8 @@ abstract interface class IAuthRepository {
   Future<AuthenticatedUser> signInWithGoogle();
 
   Future<void> updatePhoneNumber({
-    required PhoneAuthCredential phoneCredential,
+    required String verificationId,
+    required String smsCode,
   });
 
   Future<void> updateEmail({required String email});
@@ -91,8 +92,13 @@ class AuthRepository implements IAuthRepository {
 
   @override
   Future<void> updatePhoneNumber({
-    required PhoneAuthCredential phoneCredential,
+    required String verificationId,
+    required String smsCode,
   }) async {
+    final phoneCredential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
     await _firebaseAuth.currentUser?.updatePhoneNumber(phoneCredential);
   }
 

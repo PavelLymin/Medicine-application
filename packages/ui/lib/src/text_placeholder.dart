@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:ui/ui.dart';
 
 class TextPlaceholder extends StatelessWidget {
   const TextPlaceholder({

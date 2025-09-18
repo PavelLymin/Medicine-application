@@ -53,12 +53,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => _authenticationBloc),
-      BlocProvider(
-        create: (context) => DependeciesScope.of(context).verificationPhoneBloc,
-      ),
-    ],
+    providers: [BlocProvider(create: (context) => _authenticationBloc)],
     child: MaterialApp.router(
       routerConfig: appRouter.config(),
       title: 'Medical App',

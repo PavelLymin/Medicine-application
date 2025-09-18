@@ -6,6 +6,7 @@ import 'package:medicine_application/src/feature/consultation/widget/consultatio
 import 'package:medicine_application/src/feature/home/widget/home_screen.dart';
 import 'package:medicine_application/src/feature/profile/widget/profile_sreen.dart';
 import 'package:medicine_application/src/feature/profile/widget/update_phone_number_screen.dart';
+import 'package:ui/ui.dart';
 import '../../feature/chat/widget/chat_screen.dart';
 import '../../feature/profile/widget/sms_code_screen.dart';
 import '../../../ui/src/components/navigations/navigation_bar.dart';
@@ -28,9 +29,8 @@ class AppRouter extends RootStackRouter {
       builder: (context, _) => const UpdatePhoneNumberScreen(),
     ),
     NamedRouteDef(
-      initial: true,
       name: 'SmsCodeScreen',
-      builder: (context, _) => const SmsCodeScreen(),
+      builder: (context, _) => const PinScope(child: SmsCodeScreen()),
     ),
     NamedRouteDef(
       name: 'ChatScreen',

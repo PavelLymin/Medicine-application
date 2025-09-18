@@ -70,7 +70,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
     borderInputTextColor: AppColors.white,
     containerChatsColor: AppColors.containerColorLight,
     disableButtonColor: AppColors.grey,
-    disableTextColor: AppColors.darkGrey,
+    disableTextColor: AppColors.lightgrey,
     buttonSocialColor: AppColors.white,
   );
 
@@ -78,7 +78,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
     borderInputTextColor: AppColors.black,
     containerChatsColor: AppColors.containerColorDark,
     disableButtonColor: AppColors.grey,
-    disableTextColor: AppColors.darkGrey,
+    disableTextColor: AppColors.lightgrey,
     buttonSocialColor: AppColors.white,
   );
 }

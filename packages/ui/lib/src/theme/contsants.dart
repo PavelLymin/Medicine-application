@@ -1,5 +1,23 @@
 part of 'theme.dart';
 
+const labelLarge = TextStyle(
+  fontWeight: FontWeight.w600,
+  fontSize: 32,
+  color: AppColors.darkGrey,
+);
+
+const labelMedium = TextStyle(
+  fontWeight: FontWeight.w500,
+  fontSize: 20,
+  color: AppColors.darkGrey,
+);
+
+const labelSmall = TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+  color: AppColors.grey,
+);
+
 const titleLarge = TextStyle(
   fontWeight: FontWeight.w500,
   fontSize: 24,
